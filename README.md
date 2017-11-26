@@ -12,7 +12,8 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
 
 ## Modelo 
 
-![Modelo] (img/modelodominio.png)
+![alt text](img/modelodominio.png)
+
 
 
 ## Servicios REST
