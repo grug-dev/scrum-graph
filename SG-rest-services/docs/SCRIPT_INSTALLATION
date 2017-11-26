@@ -1,0 +1,22 @@
+// Creacion de constraint sobre los nodos en la BD.
+CREATE CONSTRAINT ON (n:USER) ASSERT n.email IS UNIQUE
+CREATE CONSTRAINT ON (n:PROJECT) ASSERT n.code IS UNIQUE
+CREATE CONSTRAINT ON (n:PBI) ASSERT n.code IS UNIQUE
+CREATE CONSTRAINT ON (n:SPRINT) ASSERT n.code IS UNIQUE
+CREATE CONSTRAINT ON (n:TASK) ASSERT n.code IS UNIQUE
+
+CREATE INDEX ON :USER(authToken)
+CREATE INDEX ON :PROJECT(id)
+CREATE INDEX ON :TEAM(id)
+CREATE INDEX ON :PBI(id)
+CREATE INDEX ON :SPRINT(id)
+CREATE INDEX ON :TASK(id)
+
+// Creacion de usuario Admin True por defecto
+CREATE 
+(u0:USER { name:"SUPER ADMIN SG", lastName:"SCRUM GRAPH", email:"superadminsg@gmail.com", isAdmin:true , available:true, authToken: "b24212354022337c4040c8" , password : "superadminsg" , rolDefault : "scrum" ,  createAt : timestamp() , lastModification : timestamp()})
+
+
+
+/
+

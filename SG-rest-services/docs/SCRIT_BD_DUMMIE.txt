@@ -1,0 +1,100 @@
+CREATE 
+(m1:USER { name:"Mauricio", lastName:"Bello", email:"erwing.bello@gmail.com", isAdmin:false , available:true, authToken: "f50012afb304723061a433" , password : "pass123" , rolDefault : "team-member" ,  createAt : timestamp() , lastModification : timestamp()}),
+(m2:USER { name:"Cristian", lastName:"PeÃ±a", email:"cristiancamilopena@gmail.com", isAdmin:false, available:true, authToken: "eea30a4cec3e24441302331" , password : "pass123" , rolDefault : "team-leader" ,  createAt : timestamp() , lastModification : timestamp()}),
+(m3:USER { name:"Jimena", lastName:"Rodriguez", email:"jimena.ud@gmail.com", isAdmin:false , available:true, authToken: "ec0f4ece1664ff336147" , password : "pass123" , rolDefault : "scrum-master" ,  createAt : timestamp() , lastModification : timestamp() }),
+(m4:USER { name:"Product", lastName:"Owner", email:"product-owner@gmail.com", isAdmin:false , available:false, authToken: "50946d7bc37422501643" , password : "pass123" , rolDefault : "product-owner" ,  createAt : timestamp() , lastModification : timestamp()}),
+
+
+(p1:PROJECT { name:"Proyecto 1", description:"...", code : "PROJ-1" , ownerId : 1 ,  createAt : timestamp() , lastModification : timestamp(),
+ isClosed : false , totalPBI : 10 , numPBIDone : 0} ),
+(p2:PROJECT { name:"Proyecto 2", description:"...2", code : "PROJ-2" , ownerId : 1 ,  createAt : timestamp() , lastModification : timestamp(),
+ isClosed : false , totalPBI : 10 , numPBIDone : 0} ),
+ (p3:PROJECT { name:"Proyecto 3", description:"...3", code : "PROJ-3" , ownerId : 1 ,  createAt : timestamp() , lastModification : timestamp(),
+ isClosed : false } ),
+ (p4:PROJECT { name:"Proyecto 4", description:"...4", code : "PROJ-4" , ownerId : 1 ,  createAt : timestamp() , lastModification : timestamp(),
+ isClosed : false } ),
+
+(t1:TEAM {name:"TEAM-1"}),
+(t2:TEAM {name:"TEAM-2"}),
+(t3:TEAM {name:"TEAM-3"}),
+(t4:TEAM {name:"TEAM-4"}),
+
+(p1)<-[:WORKING_ON]-(t1),
+(p2)<-[:WORKING_ON]-(t2),
+(p3)<-[:WORKING_ON]-(t3),
+(p4)<-[:WORKING_ON]-(t4),
+
+
+(m1)-[:BELONGS_TO {rolName : "ADMIN"}]->(t1),
+(m1)-[:BELONGS_TO {rolName : "MEMBER"}]->(t2),
+(m2)-[:BELONGS_TO {rolName : "MEMBER"} ]->(t1),
+(m2)-[:BELONGS_TO {rolName : "SCRUM_MASTER"}]->(t2),
+(m3)-[:BELONGS_TO {rolName : "PRODUCT_OWNER"} ]->(t2),
+(m4)-[:BELONGS_TO {rolName : "PRODUCT_OWNER"} ]->(t3),
+
+
+(b1:PBI { name:"PBI1" , code:'PBI-1', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b2:PBI { name:"PBI2" , code:'PBI-2', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b3:PBI { name:"PBI3" , code:'PBI-3', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b4:PBI { name:"PBI4" , code:'PBI-4', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b5:PBI { name:"PBI5" , code:'PBI-5', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b6:PBI { name:"PBI6" , code:'PBI-6', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b7:PBI { name:"PBI7" , code:'PBI-7', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b8:PBI { name:"PBI8" , code:'PBI-8', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: false,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b9:PBI { name:"PBI9" , code:'PBI-9', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+(b10:PBI { name:"PBI10" , code:'PBI-10', description:"Descripcion PBI", priority: 1, historyPoints:20, status:'TODO' , ownerId : 1 , available: true,   type:"user-story", createAt : timestamp() , lastModification : timestamp() , isClosed : false , velocity : 15 , totalTASK : 0 , numTASKDone : 0}),
+
+(b1)<-[:BELONGS_TO]-(p1),
+(b2)<-[:BELONGS_TO]-(p1),
+(b3)<-[:BELONGS_TO]-(p1),
+(b4)<-[:BELONGS_TO]-(p1),
+(b5)<-[:BELONGS_TO]-(p1),
+(b6)<-[:BELONGS_TO]-(p1),
+(b7)<-[:BELONGS_TO]-(p1),
+(b8)<-[:BELONGS_TO]-(p1),
+(b9)<-[:BELONGS_TO]-(p1),
+(b10)<-[:BELONGS_TO]-(p1),
+
+
+(SPRINT0:SPRINT {name:"SPRINT 0", code : "SPR-0" , description : "DESCRIPCION SPRINT" , status : "TODO" , initDate : timestamp() , endDate : timestamp() + 15, sprintSchedule: 15 ,  ownerId: 1 , createAt : timestamp() , lastModification : timestamp() , velocity : 0 , isClosed : false , totalPBI : 0 , numPBIDone : 0}),
+(SPRINT1:SPRINT {name:"SPRINT 1", code : "SPR-1" , description : "DESCRIPCION SPRINT" , status : "TODO" , initDate : timestamp() , endDate : timestamp() + 15, sprintSchedule: 15 ,  ownerId: 1 , createAt : timestamp() , lastModification : timestamp() , velocity : 0 , isClosed : false , totalPBI : 0 , numPBIDone : 0}),
+(SPRINT2:SPRINT {name:"SPRINT 2", code : "SPR-2" , description : "DESCRIPCION SPRINT" , status : "TODO" , initDate : timestamp() , endDate : timestamp() + 15, sprintSchedule: 15 ,  ownerId: 1 , createAt : timestamp() , lastModification : timestamp() , velocity : 0 , isClosed : false , totalPBI : 0 , numPBIDone : 0}),
+(SPRINT3:SPRINT {name:"SPRINT 3", code : "SPR-3" , description : "DESCRIPCION SPRINT" , status : "TODO" , initDate : timestamp() , endDate : timestamp() + 15, sprintSchedule: 15 ,  ownerId: 1 , createAt : timestamp() , lastModification : timestamp() , velocity : 0 , isClosed : false , totalPBI : 0 , numPBIDone : 0}),
+
+
+(SPRINT0)<-[:IS_COMPOSED]-(p1),
+(SPRINT1)<-[:IS_COMPOSED]-(p1),
+(SPRINT2)<-[:IS_COMPOSED]-(p1),
+(SPRINT3)<-[:IS_COMPOSED]-(p1),
+
+(b1)<-[:WORKS_ON]-(SPRINT0),
+(b2)<-[:WORKS_ON]-(SPRINT0),
+(b3)<-[:WORKS_ON]-(SPRINT0),
+(b4)<-[:WORKS_ON]-(SPRINT1),
+(b5)<-[:WORKS_ON]-(SPRINT1),
+(b6)<-[:WORKS_ON]-(SPRINT2),
+(b7)<-[:WORKS_ON]-(SPRINT2),
+(b8)<-[:WORKS_ON]-(SPRINT2),
+(b9)<-[:WORKS_ON]-(SPRINT3),
+(b10)<-[:WORKS_ON]-(SPRINT3),
+
+
+(TASK1:TASK { name : "TAREA 1 " , code : "TSK-1" , description : " Descripcion de la tarea" , estimateHours : 50 , executeHours : 20 , remainingHours : 30,
+percentageDone : 60 , status : "TODO" , type : "improvement" , createAt : timestamp() , lastModification : timestamp() , ownerId : 1 , 
+isClosed : false}),
+(TASK2:TASK { name : "TAREA 2 " , code : "TSK-2" ,description : " Descripcion de la tarea" , estimateHours : 50 , executeHours : 20 , remainingHours : 30,
+percentageDone : 0 , status : "TODO" , type : "bug" , createAt : timestamp() , lastModification : timestamp() , ownerId : 1 , 
+isClosed : false}),
+(TASK3:TASK { name : "TAREA 3 " , code : "TSK-3" ,description : " Descripcion de la tarea" , estimateHours : 50 , executeHours : 20 , remainingHours : 30,
+percentageDone : 10 , status : "TODO" , type : "task" , createAt : timestamp() , lastModification : timestamp() , ownerId : 1 , 
+isClosed : false}),
+(TASK4:TASK { name : "TAREA 4 " , code : "TSK-4" ,description : " Descripcion de la tarea" , estimateHours : 50 , executeHours : 20 , remainingHours : 30,
+percentageDone : 30 , status : "TODO" , type : "new-feature" , createAt : timestamp() , lastModification : timestamp() , ownerId : 1 , 
+isClosed : false}),
+(TASK5:TASK { name : "TAREA 5 " , code : "TSK-5" ,description : " Descripcion de la tarea" , estimateHours : 50 , executeHours : 20 , remainingHours : 30,
+percentageDone : 20 , status : "TODO" , type : "improvement" , createAt : timestamp() , lastModification : timestamp() , ownerId : 1 , 
+isClosed : false}),
+
+(b1)-[:PERFORMS]->(TASK1),(b1)-[:PERFORMS]->(TASK2),(b2)-[:PERFORMS]->(TASK3),(b2)-[:PERFORMS]->(TASK4),(b3)-[:PERFORMS]->(TASK5)
+
+

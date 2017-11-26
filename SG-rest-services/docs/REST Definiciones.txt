@@ -1,0 +1,779 @@
+http status indica que fue exitoso o envia errores
+	200 por defecto indica que fue peticion exitosa
+mirar si los errores los enviamos siguiendo la practica de REST, que es enviar los codigos desde los headers: mirar http://www.restapitutorial.com/httpstatuscodes.html
+	O si lo enviamos con codigos nuestros en el formato JSON
+
+settings/backlog-items-priority-types  GET backlog-items-priority-types fijos pueden ser: HIGH, MEDIUM, LOW y permitir que configuren custom por proyecto
+settings/backlog-items-types  GET backlog-items, fijos: user-story, feature (no se), defect, test por proyecto
+settings/tasks-priority-types  GET task-priority-types fijos pueden ser: HIGH, MEDIUM, LOW y permitir que configuren custom por proyecto
+settings/task-types  GET task-types, fijos algunos?: development, testing, coding, analysis.... (no se) y ver si permitir custom por proyectos por proyecto
+settings/members-types GET los member types unos fijos?: team-member, team-leader, scrum-master, product-owner, los otros que se creen pertenecen a este tipo por proyecto
+settings/sprint-schedule tipos de periodos de sprint son fijos: 1 semana, 2 semanas, 3 semanas, 4 semanas, 1 mes, 2 meses por proyecto
+settings/teams configura los equipos posibles para los sprints. release o project
+settings/custom-properties/projects configurar nombres de propiedades que van a tener los proyectos, sera como un array de strings; ej: costo del proyecto, 
+
+auth/login metodo que envia user, password el success 200, con el access token que se almacenara en cookie o localstorage
+auth/logout metodo para borrar el access token, y devolver success 200
+auth/register (metodo en el admin, interno para crear usuario, user, password, member-type, is-admin)
+	is-admin por que puede entrar a todo lado
+auth/get-access-token
+	si se hace con variable de sesion // nodos session
+auth/check-access-token
+	si se hace con variable de sesion // nodos session
+
+
+
+projects/
+	GET trae todos los proyectos, dependiendo del access-token, saca todos, o a los que pertenece el usuario, tambien depende de si el usuario es admin o no
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias o algo asi, un nivel de seguridad
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas y validaciones
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //usuario no autenticado, codigos de error, ej codigo duplicado de proyecto 506 o algo asi, 506 o algo asi, codigo para decir que no es autorizado (este metodo es para todos los usuarios logueados)
+			response:{
+				projects:[ //dependiendo de si el miembro 'is-admin', trae todos los proyectos, si no devuelve los proyectos que tengan sprints con team al que pertenezca este miembro logueado
+					{
+						id:XX (int) //auto numerico puede ser el mismo de neo4j, no lo recomiendo por que no es autonumerico, es un id para cualquier tipo de nodo, 
+						code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+						pd-owner:(int) //id del product owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que son product-owner, pero para no forzarlo, no validar eso
+						owner:(int) //id del owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que sean scrum-master, pero para no forzarlo, no validar eso, eso si que sean is-admin
+						description:string(max 200) //cadena para descripcion del proyecto, no requerido
+						is-closed:boolean //indica si el proyecto fue cerrado, es decir archivado y que ya se acabo, es para informacion de indicador, y para la navegacion de grafos, que se vea oculte cuando se usen filtros
+						isActive:boolean//
+						parent:id //para el futuro, proyectos anidados, opcional, vacio null
+						created-at:date//fecha de creacion del nodo
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						last-modification:date== a la de created-at o null //fecha de la ultima modificacion de las propiedades
+						custom-properties:{
+							property1:value //seran solo textos, abra un administrador para definir los custom types, que seran textos de solo informacion, cada proyecto puede tener sus propios custom properties o seran generales para todos los presentes y futuros, sus valores pueden ser vacios =""
+							property2:value....
+						}
+					}
+				]			
+				count:XX //numero de proyectos, aunque lo puedo sacar, es siguiendo estandard de las apis
+				next-project-code:xx //codigo generado o calculado desde backend, para sugerir en front u obligar, en la siguiente creacion de proyectos 
+			}
+		}
+
+		//servicio se usara para rellenar los combobox, de los sprints, releases, backlog-items que se vayan a crear, 
+		// para la navegacion tradicional, obtener los metadatos ya que los demas requests traeran el id del proyecto, pero no sus datos
+
+	POST crea un nuevo proyecto, retorna un success, con el id del nuevo proyecto
+		campos, firma:
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'POST' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+			code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+			pd-owner:(int) //id del product owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que son product-owner, pero para no forzarlo, no validar eso
+			owner:(int) //id del owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que sean scrum-master, pero para no forzarlo, no validar eso, eso si que sean is-admin
+			description:string(max 200) //cadena para descripcion del proyecto, no requerido
+
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error, ej usuario no autenticado, codigo duplicado de proyecto 506 o algo asi, codigo para decir que no es autorizado (usuario que intento hacer el llamado no es 'is-admin')
+			response:{
+				project: //dependiendo de si el miembro 'is-admin', trae el proyecto creado, si no es admin ninguno
+					{
+						id:XX (int) //auto numerico puede ser el mismo de neo4j, no lo recomiendo por que no es autonumerico, es un id para cualquier tipo de nodo, 
+						code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+						pd-owner:(int) //id del product owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que son product-owner, pero para no forzarlo, no validar eso
+						owner:(int) //id del owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que sean scrum-master, pero para no forzarlo, no validar eso, eso si que sean is-admin
+						description:string(max 200) //cadena para descripcion del proyecto, no requerido
+						is-closed:boolean=false por ser nuevo //indica si el proyecto fue cerrado, es decir archivado y que ya se acabo, es para informacion de indicador, y para la navegacion de grafos, que se vea oculte cuando se usen filtros
+						isActive:boolean//
+						parent:id null//para el futuro, proyectos anidados, opcional, vacio null
+						created-at:date//fecha de creacion del nodo
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						last-modification:date== a la de created-at o null //fecha de la ultima modificacion de las propiedades
+						custom-properties:{
+							property1:value //seran solo textos, abra un administrador para definir los custom types, que seran textos de solo informacion, cada proyecto puede tener sus propios custom properties o seran generales para todos los presentes y futuros, sus valores pueden ser vacios =""
+							property2:value....
+
+						}
+
+					}	
+				next-project-code:xx //codigo generado o calculado desde backend, para sugerir en front, u obligar
+			}
+		}
+
+		//servicio se usara para crear un proyecto nuevo
+	DELETE no hay uso
+	PUT no hay uso
+	
+projects/validate-code   No importante
+	GET servicio para validar un codigo de proyecto, se usararia desde front para validar un codigo
+		de proyecto nuevo
+		campos, firma:
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ejusuario no autenticado,  codigo ya existe, codigo tiene mas de 8 caracteres ..., usuario no permitido si no es 'is-admin'
+			response:{
+				next-project-code:xx //(retornar cuando se presente o no error) codigo generado o calculado desde backend, para sugerir en front, u obligar
+			}
+		}
+		//usado por si se llega a permitir que el usuario escriba su propio codigo recordable
+
+projects/:id
+	GET trae la info de un proyecto
+		campos, firma:
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, codigo ya existe, codigo tiene mas de 8 caracteres ...
+			response:{
+				project: //dependiendo de si el miembro 'is-admin', trae el proyecto existente
+					{
+						id:XX (int) //auto numerico puede ser el mismo de neo4j, no lo recomiendo por que no es autonumerico, es un id para cualquier tipo de nodo, 
+						code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+						pd-owner:(int) //id del product owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que son product-owner, pero para no forzarlo, no validar eso
+						owner:(int) //id del owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que sean scrum-master, pero para no forzarlo, no validar eso, eso si que sean is-admin
+						description:string(max 200) //cadena para descripcion del proyecto, no requerido
+						is-closed:boolean=false por ser nuevo //indica si el proyecto fue cerrado, es decir archivado y que ya se acabo, es para informacion de indicador, y para la navegacion de grafos, que se vea oculte cuando se usen filtros
+						isActive:boolean//
+						parent:id null//para el futuro, proyectos anidados, opcional, vacio null
+						created-at:date//fecha de creacion del nodo
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						last-modification:date //fecha de la ultima modificacion de las propiedades
+						custom-properties:{
+							property1:value //seran solo textos, abra un administrador para definir los custom types, que seran textos de solo informacion, cada proyecto puede tener sus propios custom properties o seran generales para todos los presentes y futuros, sus valores pueden ser vacios =""
+							property2:value....
+
+						}
+
+					}	
+				next-project-code:xx //codigo generado o calculado desde backend, para sugerir en front, u obligar
+
+			}
+		}
+		//usado para el formulario para editar, y obtener la informacion de un proyecto en cualquier parte
+//
+//	PUT para actualizar los datos de un proyecto(puede ser post)
+		campos, firma: (se debe validar que el que este intentando actualizar un proyecto tenga el tipo de usuario is-admin, tambien dependiendo del id que exista, )
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'POST' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+			project: 
+					{
+						id:XX (int) //auto numerico puede ser el mismo de neo4j, no lo recomiendo por que no es autonumerico, es un id para cualquier tipo de nodo, 
+						code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+						pd-owner:(int) //id del product owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que son product-owner, pero para no forzarlo, no validar eso
+						owner:(int) //id del owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que sean scrum-master, pero para no forzarlo, no validar eso, eso si que sean is-admin
+						description:string(max 200) //cadena para descripcion del proyecto, no requerido
+						is-closed:boolean=false por ser nuevo //indica si el proyecto fue cerrado, es decir archivado y que ya se acabo, es para informacion de indicador, y para la navegacion de grafos, que se vea oculte cuando se usen filtros
+						isActive:boolean//
+						parent:id null//para el futuro, proyectos anidados, opcional, vacio null
+						created-at:date//fecha de creacion del nodo
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						last-modification:date //fecha de la ultima modificacion de las propiedades
+						custom-properties:{
+							property1:value //seran solo textos, abra un administrador para definir los custom types, que seran textos de solo informacion, cada proyecto puede tener sus propios custom properties o seran generales para todos los presentes y futuros, sus valores pueden ser vacios =""
+							property2:value....
+
+						}
+
+					}	
+
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, proyecto id no existe, codigo ya existe, codigo tiene mas de 8 caractere, error de db etc ...
+			response:{
+				project: //dependiendo de si el miembro 'is-admin', trae el proyecto
+					{
+						id:XX (int) //auto numerico puede ser el mismo de neo4j, no lo recomiendo por que no es autonumerico, es un id para cualquier tipo de nodo, 
+						code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+						pd-owner:(int) //id del product owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que son product-owner, pero para no forzarlo, no validar eso
+						owner:(int) //id del owner, que es opcional, puede venir vacio null, debe ser valido a pertenecer a algun member node con propiedad is-admin, normalmente members que sean scrum-master, pero para no forzarlo, no validar eso, eso si que sean is-admin
+						description:string(max 200) //cadena para descripcion del proyecto, no requerido
+						is-closed:boolean=false por ser nuevo //indica si el proyecto fue cerrado, es decir archivado y que ya se acabo, es para informacion de indicador, y para la navegacion de grafos, que se vea oculte cuando se usen filtros
+						isActive:boolean//
+						parent:id null//para el futuro, proyectos anidados, opcional, vacio null
+						created-at:date//fecha de creacion del nodo
+						last-modification:date //fecha de la ultima modificacion de las propiedades
+						custom-properties:{
+							property1:value //seran solo textos
+						}
+
+					}
+			}
+		}
+		//usado para el formulario para actualizar la informacion de un proyecto desde forms o desde el grafo eventualmente cualquier parte
+
+//	DELETE para borrar un proyecto, sugiero no borrar realmente el nodo, sino marcar en una propiedad del nodo privada de que es un proyecto borrado is-deleted, para evitar borrarlo y recuperarlo y no complicarnos con borrar todos los nodos hijos, ya con saber que un proyecto es borrado todo su contenido se vuelve inaccesible, es una buena practica no borrar realmente información
+		campos, firma: (se debe validar que el que este intentando borrar un proyecto tenga el tipo de usuario is-admin, tambien dependiendo del id que exista, )
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'DELETE' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+			project: 
+					{
+						id:XX (int) //aunque viene en el path de la url, no estaria demas enviarlo por aca, depronto quitarlo
+					}	
+
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, proyecto id no existe, codigo ya existe, codigo tiene mas de 8 caractere, error de db etc ...
+		}
+		//usado para el formulario para borrar la informacion de un proyecto desde forms o desde el grafo eventualmente cualquier parte
+
+
+projects/:id/graph/all 
+	GET trae todos los nodos hijos de un proyecto, hasta el nivel de tasks, para representarlo en grafos visualizacion
+		consulta de apoyo: 
+			MATCH (n:Project {name:'Proyecto 1'}) // o code etc
+			WITH n
+			MATCH p=(n)-[r]-(m)
+			WITH p, m
+			MATCH h=(m)-[i]-(j)
+			RETURN p,h
+		campos, firma:
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado por lo que no habria que validar si es admin o no
+			response:{//OPCION 1 la que mas me gusta
+				
+				links:[
+					{
+						id:XX, //id de relacion
+						properties:{
+							//propiedades de la relacion, por ejemplo, created_at
+						} 
+						type:string // nombre de la relacion, ej en (n:Project) -[TIENE]-> (j:Sprint), seria TIENE
+						sourceId:XX,
+						targetId:XX,
+						source:{
+							id:int // id del elemnto	
+							type:string [project, backlog-item, task, sprint, release]
+							properties:{
+								//propiedades del nodo
+								custom-properties:{
+									//propiedades tipo custom por proyecto de ese tipo de nodo
+								}
+
+							}
+						}
+						target:{
+							id:int // id del elemnto	
+							type:string [project, backlog-item, task, sprint, release]
+							properties:{
+								//propiedades del nodo
+								custom-properties:{
+									//propiedades tipo custom por proyecto de ese tipo de nodo
+								}
+
+							}
+						}
+						
+					}
+				]
+				
+			}
+			response:{//OPCION 2 opcion mas facil de parsear desde neo4j api rest
+				nodes:[ //todos los nodos unicos resultantes de las consultas
+					{
+						id:int // id del elemnto	
+						type:string [project, backlog-item, task, sprint, release]
+						labels:[string] //labels del nodo
+						properties:{
+							//propiedades del nodo
+							custom-properties:{
+								//propiedades tipo custom por proyecto de ese tipo de nodo
+							}
+
+						}
+					}
+					
+				]
+				links:[
+					{
+						id:int, //id de relacion
+						properties:{
+							//propiedades de la relacion, por ejemplo, created_at
+						} 
+						type:string // nombre de la relacion, ej en (n:Project) -[TIENE]-> (j:Sprint), seria TIENE
+						sourceId:XX,
+						targetId:XX						
+					}
+				]
+				
+			}
+			response:{//OPCION 3 es un poco rigida pero se puede usar
+				nodes:[ 
+					{
+						id:int//id del nodo
+						type:string //nodo tipo
+						properties:{
+							//todas las propiedades del nodo
+						}
+						children:[
+							{
+								id:int//id del nodo
+								type:string //nodo tipo
+								properties:{
+									//todas las propiedades del nodo
+									custom-properties:{
+										//propiedades tipo custom por proyecto de ese tipo de nodo
+									}
+
+								}
+							}
+						]
+					}
+				]
+			}
+
+		}
+		//usado para la visualizacion de todo el grafo
+
+
+
+projects/:id/graph/sprints
+	GET trae todos los nodos hijos de un proyecto, hasta el nivel de sprints (project->release->sprints, es decir una union de project->release, project->sprint, release->sprint)
+		todo lo que tiene un proyecto hasta los sprints, no traer, el team del sprint ni sus miembros, no traer baklog items y tareas
+
+		consulta de apoyo: 
+			MATCH (proj:Project {name:'Proyecto 1'})-[r]-(sprint:Sprint)
+			RETURN proj as startNode, r as link, sprint as endNode
+			UNION ALL
+			MATCH (p:Project {name:'Proyecto 1'})-[r]-(r:Release)
+			RETURN p as startNode, r as link, r as endNode
+			UNION ALL
+			MATCH (p:Project {name:'Proyecto 1'})--(release:Release)-[r]-(sprint:Sprint)
+			RETURN release as startNode, r as link, sprint as endNode		campos, firma:
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado por lo que no habria que validar si es admin o no
+			response:{//OPCION 1 la que mas me gusta
+				
+				links:[
+					{
+						id:XX, //id de relacion
+						properties:{
+							//propiedades de la relacion, por ejemplo, created_at
+						} 
+						type:string // nombre de la relacion, ej en (n:Project) -[TIENE]-> (j:Sprint), seria TIENE
+						sourceId:XX,
+						targetId:XX,
+						source:{
+							id:int // id del elemnto	
+							type:string [project, backlog-item, task, sprint, release]
+							properties:{
+								//propiedades del nodo
+								custom-properties:{
+									//propiedades tipo custom por proyecto de ese tipo de nodo
+								}
+
+							}
+						}
+						target:{
+							id:int // id del elemnto	
+							type:string [project, backlog-item, task, sprint, release]
+							properties:{
+								//propiedades del nodo
+								custom-properties:{
+									//propiedades tipo custom por proyecto de ese tipo de nodo
+								}
+
+							}
+						}
+						
+					}
+				]
+				
+			}
+
+		}
+		//usado para la visualizacion de el grafo desde nivel proyecto hasta sprints Proyecto-Release, Proyecto Sprints, Sprints-releases
+		//para mostrar grafo de un proyecto hasta nivel de sprints y hacer dinamicamente la pintada del resto
+
+
+projects/:id/graph/sprints:id/
+	GET trae todos los nodos hijos de un sprint de un proyecto, esto es sus propiedades y relaciones con Backlog items, y sus propiedades, y as u vez las tasks de esos backlog items y sus respectivas proiedades
+		sprint->backlog-items->tasks
+		todo lo que tiene un sprint hasta las tasks, no traer, el team del sprint ni sus miembros
+
+		consulta de apoyo: 
+			MATCH (proj:Project {name:'Proyecto 1'})-[r]-(sprint:Sprint)
+			RETURN proj as startNode, r as link, sprint as endNode
+			UNION ALL
+			MATCH (p:Project {name:'Proyecto 1'})-[r]-(r:Release)
+			RETURN p as startNode, r as link, r as endNode
+			UNION ALL
+			MATCH (p:Project {name:'Proyecto 1'})--(release:Release)-[r]-(sprint:Sprint)
+			RETURN release as startNode, r as link, sprint as endNode		campos, firma:
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado por lo que no habria que validar si es admin o no
+			response:{//OPCION 1 la que mas me gusta
+				
+				links:[
+					{
+						id:XX, //id de relacion
+						properties:{
+							//propiedades de la relacion, por ejemplo, created_at
+						} 
+						type:string // nombre de la relacion, ej en (n:Project) -[TIENE]-> (j:Sprint), seria TIENE
+						sourceId:XX,
+						targetId:XX,
+						source:{
+							id:int // id del elemnto	
+							type:string [project, backlog-item, task, sprint, release]
+							properties:{
+								//propiedades del nodo
+								custom-properties:{
+									//propiedades tipo custom por proyecto de ese tipo de nodo
+								}
+
+							}
+						}
+						target:{
+							id:int // id del elemnto	
+							type:string [project, backlog-item, task, sprint, release]
+							properties:{
+								//propiedades del nodo
+								custom-properties:{
+									//propiedades tipo custom por proyecto de ese tipo de nodo
+								}
+							}
+						}
+						
+					}
+				]
+				
+			}
+
+		}
+		//usado para la visualizacion de el grafo desde nivel sprint hasta tasks Sprint-BI, BI Tasks
+		//para mostrar grafo de un proyecto hasta nivel de tasks dinamicamente agregando nodos despues de los sprints
+
+
+
+
+projects/:id/members
+	GET trae todos los miembros del team o teams (solo uno) de un proyecto
+		project->team->members
+
+		consulta de apoyo: 
+			MATCH (p:Project)-[r]-(t:Team)-[l]-(m:Member) WHERE p.code='' RETURN m, l
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado, pero hay que validar que el usuario "requester" si no es 'isAdmin', pertenezca en ese equipo
+			response:{//OPCION 1 la que mas me gusta
+				
+				members:[
+					{
+						id:int // id del miembro es el mismo que genera neo4j, (acordarnos que no es autonumerico)
+						name:String //nombre del miembro o usaurio
+						lastName:String // opcional
+						email:String,	//correo
+						roleDefault:String ["project-owner"|"scrum-master"|"team-leader"|"team-member]//rol general que es el que se establece en el momento de creacion de un usuario, y es que es asociado con los tipos basicos de usuario en scrum reducidos a: product-owner, scrum-master, team-leader, team-member
+						isActive:boolean//
+						isAdmin:boolean//
+						createdAt:fecha
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						capacityHours:int // el numero de horas maximo de capacidad de trabajo al dia destinados para trabajar en los proyectos de la compañia
+						projectRole:String ["project-owner"|"scrum-master"|"team-leader"|"team-member|....los custom aditional project role types], // un miembro tiene un rol especifico en el projecto, diferente entre proyectos (ej. Un desarrollador que en un proyecto es un simple team-member, pero que en otro es leader), por eso en un projyecto se deberia especificar que rol de los basicos cumpliria en cada proyecto, esto se puede guardar en la relacion no en el nodo, pues este funciona como una tabla que relaciona entidades en las BD relacionales
+						projectCapacityHours, int // Un valor opcional pero sugerido que servira para estimacion y planeacion de asignacion de actividades (BI) a un miembro de equipo, pienso que debe ser una capacidad de horas destinada al proyecto por dia, que es diferente a las horas de trabajo de un trabajador, pues por proyecto se destinan horas determinadas, por que se presenta en empresas donde se trabajan proyectos simultaneos, esto se puede guardar en la relacion no en el nodo, pues este funciona como una tabla que relaciona entidades en las BD relacionales
+						customProperties:{
+							//las que se creen en el administrador customizador de propiedades de los miembros, son propiedades customizadas para todos los miembros para compartir en todos los proyectos, (definir si son propiedades customzadsa usan en un proyecto, y en otro proyecto otras?, o son custom properties para todos los usuarios)
+						}
+					}
+				]
+				
+			}
+
+		}
+		//usado para los formularios de listas de miembros en comboboxes de asignacion de responsables de tareas y de BIs
+	POST no se usara, 
+		//pues no se crearan miembros asociados a proyectos directamente, sino que se asignan a equipos "teams" que pueden trabajar en varios proyectos
+		//la creacion de miembros se hara en el admin de teams
+	PUT 
+		//no se usara, es tema de admin de teams
+	DELETE
+		no se usara, es tema de admin de teams
+
+
+projects/:id/backlog-items/ 
+	GET trae todos los backilog items de un projecto
+		project->backlog-items
+
+		consulta de apoyo: 
+			MATCH (p:Project)-[r]-(bi:BacklogItem) 
+			WHERE p.code='P-1' 
+			OPTIONAL MATCH (bi)--(s:Sprint)
+			OPTIONAL MATCH (bi)--(m:Member)
+			RETURN bi, s IS NOT NULL as planedInSprint, id(m) as owner
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado, pero hay que validar que el usuario "requester" si no es 'isAdmin', pertenezca en ese equipo
+			response:{
+				
+				backlog-items:[
+					{
+						code:String //code:(patron string: P-1) //maximo 8 caracteres, codigo a ser validado para ser unico cuando se crea, se va sugerir desde front un codigo en el formulario de creacion, para que lo cambie, y si no se impone despues de la creacion
+						title:String //Titulo de el backlog item
+						description:string //Descripcion del backlog item
+						isClosed:boolean //Indica si el BI fue cerradoo finalizado
+						priority:String [HIGH, MEDIUM, LOW etc y custom]
+						estimatedPoints:int //los puntos estimados de un BI
+						status o state: String [TODO|INPROGRESS|DONE y customs intermedios entre TODO y DONE] //estado actual del BI
+						type: String //Tipo de BI [USER-STORY, DEFECT.. y customs]
+						owner: [ints] //id del responsable o los responsables que trabajan en el BI
+						plannedInSprint:boolean //indica si el BI ya esta involucrado en un sprint
+						startDate:fecha // diahora en que un BI deja es transicionado de todo a otro estado 
+						createdAt:fecha //diahora que un BI fue creado
+						isBlocked:boolean // indica si un BI tiene marcado que tiene un impedimento
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						completedAt:fecha //diahora que un BI es establecido como
+						closedVerifiedBy: int //id del man que verifico que la BI ya fue completada
+						custom-properties:{
+							property1:String //propiedades adicionales que puede terne un BI que van a usarse para almacenar textos o quizas hasta numeros
+						}
+						stats:{
+							//propiedades para las estadisticas de los bis ej: tasks closed, task remaining, hours done, hours remaining, details task hours estimated
+							//serian los que se gardan para agilizar la cumulacion de indicadores,
+							//aunque la mejor opcion va ser tener un rest api end point para obtener las estadisticas por separados, 
+							//de todas maneras es bueno acumular indicadores, a medida que se modifica datos de BI, y sus tareas hijas
+							
+						}
+					}
+				]
+				
+			}
+
+		}
+		//Usado para listados y formularios
+
+
+
+projects/:id/backlog-items/:id trae todos los backilog items de un projecto
+projects/:id/backlog-items/unasigned trae todos los backilog items de un projecto que no estan asignados a sprints ni a releases
+projects/:id/releases
+projects/:id/releases/:id
+projects/:id/releases/:id/backlog-items
+projects/:id/releases/:id/backlog-items/unasigned
+projects/:id/sprints
+projects/:id/sprints/:id
+projects/:id/sprints/:id/backlog-items
+projects/:id/sprints/:id/backlog-items/:id
+projects/:id/sprints/:id/backlog-items/:id/tasks/:id
+projects/:id/sprints/:id/teams
+projects/:id/sprints/:id/teams/:id/members
+projects/:id/history
+releases/:id
+releases/:id/backlog-items
+releases/:id/backlog-items/unasigned
+releases/:id/sprints
+projects/:id/history
+sprints/:id
+sprints/:id/backlog-items
+sprints/:id/history
+backlog-items/:id
+backlog-items/:id/tasks
+backlog-items/:id/history
+tasks/:id
+tasks/:id/history
+
+
+
+
+teams
+teams/:id/members
+members/?limit=XX&skip=XX&active=true&admins=true
+	GET trae todos los miembros o usuarios del sistema de todos los proyectos
+		aditional params GET limit(defecto null) skip (defecto null) para limitar los resultados, 
+			active (defecto true), para retornar los miembros activos
+			admins (defecto false), para retornar solo los miembros admin
+		membres
+
+		consulta de apoyo: 
+			MATCH (m:Member) WHERE m.active=true RETURN m
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado
+			response:{
+				
+				members:[
+					{
+						id:int
+						name:String
+						lastName:String
+						email: String//constraint de que no hayan repetidos (sera como una llave primaria), validar codigo
+						isAdmin: boolean//
+						isActive:boolean//
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						createdAt:fecha
+						lastModification:fecha
+						roleDefault:String ["project-owner"|"scrum-master"|"team-leader"|"team-member]//rol general que es el que se establece en el momento de creacion de un usuario, y es que es asociado con los tipos basicos de usuario en scrum reducidos a: product-owner, scrum-master, team-leader, team-member
+						capacityHours:int // el numero de horas maximo de capacidad de trabajo al dia destinados para trabajar en los proyectos de la compañia
+						custom-properties:{
+							property1:String //propiedades adicionales las que se creen en el administrador customizador de propiedades de los miembros, son propiedades customizadas para todos los miembros para compartir en todos los proyectos, (definir si son propiedades customzadsa usan en un proyecto, y en otro proyecto otras?, o son custom properties para todos los usuarios)
+						}
+					}
+				]
+				
+			}
+
+		}
+		//Usado para listados y formularios
+members/:id
+	GET trae los datos de un miembro del sistema
+		consulta de apoyo: 
+			MATCH (m:Member) WHERE id(m)=XX RETURN m
+		REQUEST
+		{
+			auth-token:string //del miembro logueado, sirve para validacion de permisos
+						un usuario deberia tener una expiracion de 2 dias
+						contrastar en el nodo miembro si existe el auth-token
+						asi obtener si is-admin y que se usa para variar las respuestas
+			method:'GET' //valores pueden ser GET, POST, PUT, DELETE, es para reforzar la interpretacion del http request que se desea hacer en el llamado
+		}
+		RESPUESTA
+		{
+			status:'ok|error' o 'success|failed', // ok indica que no hubo error
+			error-message:''//errores de validacion redeable
+			error-code:numeric o cadena numero //codigos de error,ej usuario no autenticado, se usara para cualquier usuario logueado
+			response:{
+				
+				member:
+					{
+						id:int
+						name:String
+						lastName:String
+						email: String//constraint de que no hayan repetidos (sera como una llave primaria), validar codigo
+						isAdmin: boolean//
+						isActive:boolean//
+						isDeleted:boolean //Indica si el nodo fue borrado
+						deletedAt:fecha//fecha cuando borraron el nodo
+						createdAt:fecha
+						roleDefault:String ["project-owner"|"scrum-master"|"team-leader"|"team-member]//rol general que es el que se establece en el momento de creacion de un usuario, y es que es asociado con los tipos basicos de usuario en scrum reducidos a: product-owner, scrum-master, team-leader, team-member
+						capacityHours:int // el numero de horas maximo de capacidad de trabajo al dia destinados para trabajar en los proyectos de la compañia
+						custom-properties:{
+							property1:String //propiedades adicionales las que se creen en el administrador customizador de propiedades de los miembros, son propiedades customizadas para todos los miembros para compartir en todos los proyectos, (definir si son propiedades customzadsa usan en un proyecto, y en otro proyecto otras?, o son custom properties para todos los usuarios)
+						}
+					}
+			}
+
+		}
+		//Usado para listados y formularios
+
+
+
+todos deben enviar un access token generado cuando se logea, un access token tiene fecha de expiracion
+en tal caso las peticiones arrojan 401 http status
+
