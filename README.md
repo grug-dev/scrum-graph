@@ -9,6 +9,7 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
    * Neo4j - (Graph Database)
    * Java 7
 
+### Se realizará migración del proyecto a Spring Framework 5 con Java 8
 
 ## Modelo 
 
