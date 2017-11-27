@@ -7,6 +7,7 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
 ## Tecnologias
    * Servicios RESTful construidos con jersey.
    * Neo4j - (Graph Database)
+   * Java 7
 
 
 ## Modelo 
