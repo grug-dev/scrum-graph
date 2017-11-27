@@ -46,12 +46,29 @@ El esquema del modelo de la base de datos en grafo del dominio de la aplicación
 Los atributos son las propiedades clave-valor establecidas en cada nodo del modelo de la base de datos orientada a grafos.
 A continuación se exponen los atributos definidos para cada uno de los nodos.
 
-![alt text](img/attr_user.png)
-![alt text](img/attr_team.png)
-![alt text](img/attr_project.png)
-![alt text](img/attr_pbi.png)
-![alt text](img/attr_sprint.png)
-![alt text](img/attr_task.png)
+  ![alt text](img/attr_user.png)
+  
+
+
+  ![alt text](img/attr_team.png)
+  
+
+
+  ![alt text](img/attr_project.png)
+  
+
+
+  ![alt text](img/attr_pbi.png)
+  
+
+
+  ![alt text](img/attr_sprint.png)
+  
+
+
+  ![alt text](img/attr_task.png)
+  
+  
 
 #### Constraints
 
