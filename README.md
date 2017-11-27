@@ -37,7 +37,8 @@ El proyecto cuenta con los siguientes RESTful services:
     "password": "asassaddsd",
     "roleDefault": "team-member",
     "isAdmin": false
-}```
+}
+```
 
 ### Response
 
