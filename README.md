@@ -16,7 +16,7 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
 
 
 
-## Servicios REST
+## Servicios REST [En Construcción]
 
 
 El proyecto cuenta con los siguientes RESTful services:
@@ -64,3 +64,8 @@ El proyecto cuenta con los siguientes RESTful services:
     }
 }
 ```
+
+
+2. Crear un Proyecto
+
+**Pendiente de generar la documentación**
