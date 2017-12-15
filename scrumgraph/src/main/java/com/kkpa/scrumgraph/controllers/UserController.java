@@ -15,11 +15,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.kkpa.scrumgraph.aop.LogExecutionTime;
+import com.kkpa.scrumgraph.constants.ECodeResponse;
 import com.kkpa.scrumgraph.dto.ResponseDTO;
 import com.kkpa.scrumgraph.dto.ScrumHeaderDTO;
+import com.kkpa.scrumgraph.dto.UserCollectionDTO;
+import com.kkpa.scrumgraph.dto.UserDTO;
 import com.kkpa.scrumgraph.services.UserService;
-
-import co.edu.ud.scrumgraph.data.dto.NodeTO;
 
 
 
@@ -38,15 +39,13 @@ public class UserController implements ISrvSGRest {
 	@Produces(value="application/json")	
 	public ResponseDTO getUsers(@HeaderParam(SCRUM_GRAPH_HEADER) @RequestHeader ScrumHeaderDTO scrumGraphHeader) {
 		ResponseDTO respDTO = (ResponseDTO) appCtx.getBean("responseDTO");
-		List<NodeTO> allUsers = null;
+		UserCollectionDTO userCollectionDTO = (UserCollectionDTO) appCtx.getBean("userCollection");
+		List<UserDTO> allUsers = null;
 		
-		respDTO.setErrorCode("100");
-		respDTO.setErrorMsg("Rt");
-				
 		// Obtener todos los usuarios
 		allUsers = userService.getAllUsers(scrumGraphHeader.getAuthToken());
-		
-		respDTO.setResponse(allUsers);
+		userCollectionDTO.setLstUsers(allUsers);
+		respDTO.setResponse(userCollectionDTO);
 		
 		return respDTO;
 	}

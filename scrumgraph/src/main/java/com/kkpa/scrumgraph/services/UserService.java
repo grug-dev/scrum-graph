@@ -2,10 +2,10 @@ package com.kkpa.scrumgraph.services;
 
 import java.util.List;
 
-import co.edu.ud.scrumgraph.data.dto.NodeTO;
+import com.kkpa.scrumgraph.dto.UserDTO;
 
 public interface UserService {
 
-	List<NodeTO> getAllUsers(String authToken);
+	List<UserDTO> getAllUsers(String authToken);
 	
 }

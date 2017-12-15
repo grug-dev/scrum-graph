@@ -2,15 +2,17 @@ package com.kkpa.scrumgraph.dto;
 
 import java.io.Serializable;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import com.kkpa.scrumgraph.constants.ECodeResponse;
 
 @Component("responseDTO")
 @Scope("prototype")
 public class ResponseDTO implements Serializable {
 	
-	
-	private String status;
+	private String status = ECodeResponse.OK.getStatus();
 	
 	private String errorMsg;
 	
