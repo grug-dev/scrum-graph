@@ -4,12 +4,26 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
 
 **SCRUMGRAPH** publica una serie de recursos de RESTful web services relacionados con los elementos claves en el framework de Scrum,  con el objetivo de almacenar dichos elementos en grafos para dar un apoyo en la toma de decisiones en los compromisos a adquirir en la planificación de futuros Sprints, basandose en la información registrada en cada Nodo.
 
-## Tecnologias
+## Branch Info
+
+### TAG 0.0.1
    * Servicios RESTful construidos con jersey.
    * Neo4j - (Graph Database)
    * Java 7
 
-### Se realizará migración del proyecto a Spring Framework 5 con Java 8
+### Branch 1.0.X
+  * Spring Boot 1.5.9.RELEASE
+  * Spring Framework 4.3
+  * Spring Jersey
+  * Spring DATA - Neo4j [2.2.3]
+  * Java 8
+
+### Branch 2.0.X
+  * Spring Boot
+  * pring Framework 5
+  * Spring REST
+  * Spring DATA - Neo4j
+  * Java 8
 
 ## Modelo 
 
@@ -133,6 +147,4 @@ El proyecto cuenta con los siguientes RESTful services:
 ```
 
 
-2. Crear un Proyecto
-
-**Pendiente de generar la documentación**
+** In Process **
