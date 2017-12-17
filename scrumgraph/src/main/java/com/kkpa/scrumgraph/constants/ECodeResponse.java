@@ -2,7 +2,12 @@ package com.kkpa.scrumgraph.constants;
 
 public enum ECodeResponse {
 
-	OK(200,"OK")
+	OK(200,"OK"),
+	ERROR_CODE(500 , "error") , 
+	INVALID_REQUEST (101 , "Invalid Request") , 
+	INCOMPLETE_REQUEST_FIELDS ( 202 , "Incomplete request fields"),
+	INVALID_FIELDS( 203 ,"Invalid Fields"),
+	INVALID_REQ_PAYLOAD( 204 ,"Invalid Request PayLoad"),
 	
 	;
 	

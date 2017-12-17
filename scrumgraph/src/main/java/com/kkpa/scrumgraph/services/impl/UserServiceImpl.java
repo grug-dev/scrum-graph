@@ -28,17 +28,8 @@ public class UserServiceImpl implements UserService  {
 	@LogExecutionTime
 	@Override
 	public List<UserDTO> getAllUsers(String authToken) {
-		try {
 			List<User> lstUsers = (List<User>) userRepo.findAll(); 
-			return userConverter.convertCollection(lstUsers);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+			return userConverter.convertCollection(lstUsers);	
 	}
-
-	
-
 
 }

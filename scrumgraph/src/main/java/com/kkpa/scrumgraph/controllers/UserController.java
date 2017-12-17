@@ -14,100 +14,90 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-import com.kkpa.scrumgraph.aop.LogExecutionTime;
-import com.kkpa.scrumgraph.constants.ECodeResponse;
 import com.kkpa.scrumgraph.dto.ResponseDTO;
 import com.kkpa.scrumgraph.dto.ScrumHeaderDTO;
 import com.kkpa.scrumgraph.dto.UserCollectionDTO;
 import com.kkpa.scrumgraph.dto.UserDTO;
 import com.kkpa.scrumgraph.services.UserService;
 
-
-
 @Path("users")
 public class UserController implements ISrvSGRest {
 
 	@Autowired
 	private ApplicationContext appCtx;
-	
+
 	@Autowired
 	@Qualifier("userSrv")
 	private UserService userService;
-	
-	@LogExecutionTime
-	@GET()
-	@Produces(value="application/json")	
-	public ResponseDTO getUsers(@HeaderParam(SCRUM_GRAPH_HEADER) @RequestHeader ScrumHeaderDTO scrumGraphHeader) {
+
+	@GET
+	@Produces(value = "application/json")
+	public ResponseDTO getUsers(@HeaderParam(SCRUM_GRAPH_HEADER) @RequestHeader ScrumHeaderDTO scrumGraphHeader){
 		ResponseDTO respDTO = (ResponseDTO) appCtx.getBean("responseDTO");
 		UserCollectionDTO userCollectionDTO = (UserCollectionDTO) appCtx.getBean("userCollection");
 		List<UserDTO> allUsers = null;
-		
+
 		// Obtener todos los usuarios
 		allUsers = userService.getAllUsers(scrumGraphHeader.getAuthToken());
+
 		userCollectionDTO.setLstUsers(allUsers);
 		respDTO.setResponse(userCollectionDTO);
-		
+
 		return respDTO;
 	}
 
-	
-
 	/** OPTIONS */
-	@OPTIONS 
-	public Response rootCORS() {		
+	@OPTIONS
+	public Response rootCORS() {
 		return Response.ok().header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
 				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
 				.allow("OPTIONS").build();
 	}
-	
-	@OPTIONS 
-	@Path("/{id}")
-	public Response userIdCORS() {		
-		return Response.ok().header("Access-Control-Allow-Origin", "*")
-				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
-				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
-				.allow("OPTIONS").build();
-	}
-	
 
-	@OPTIONS 
+	@OPTIONS
+	@Path("/{id}")
+	public Response userIdCORS() {
+		return Response.ok().header("Access-Control-Allow-Origin", "*")
+				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
+				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
+				.allow("OPTIONS").build();
+	}
+
+	@OPTIONS
 	@Path("/{id}/projects")
-	public Response idProjectsCORS() {		
+	public Response idProjectsCORS() {
 		return Response.ok().header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
 				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
 				.allow("OPTIONS").build();
 	}
-	
-	
-	@OPTIONS 
+
+	@OPTIONS
 	@Path("/{id}/project")
-	public Response idProjectCORS() {		
+	public Response idProjectCORS() {
 		return Response.ok().header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
 				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
 				.allow("OPTIONS").build();
 	}
-	
-	
-	@OPTIONS 
+
+	@OPTIONS
 	@Path("/login")
-	public Response loginCodeCORS() {		
+	public Response loginCodeCORS() {
 		return Response.ok().header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
 				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
 				.allow("OPTIONS").build();
 	}
-	
-	@OPTIONS 
+
+	@OPTIONS
 	@Path("/verify/token")
-	public Response verifyTokenCORS() {		
+	public Response verifyTokenCORS() {
 		return Response.ok().header("Access-Control-Allow-Origin", "*")
 				.header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS")
 				.header("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-ScrumGraph-Header")
 				.allow("OPTIONS").build();
 	}
-	
 
 }

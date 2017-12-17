@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class JerseyConfiguration extends ResourceConfig {
 	
 	public JerseyConfiguration() {
-		setUp();
+		setUp();		
 	}
 
 	private void setUp() {
