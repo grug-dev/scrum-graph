@@ -48,21 +48,21 @@ El esquema del modelo de la base de datos en grafo del dominio de la aplicación
 
 #### Nodos
 
-* USER => Representa los usuarios o miembros pertenecientes a un equipo de SCRUM.
-* TEAM => Representa el equipo de SCRUM
-* PROJECT => Representa el proyecto de software sobre el qué se va a realizar el seguimiento.
-* PBI => Representa a los Product Backlog Items que componen las funcionalidades a realizar en un proyecto. 
-* SPRINT => Representa las iteraciones realizadas sobre un proyecto.
-* TASK => Representa las tareas realizadas en un PBI.
+* **USER =>** Representa los usuarios o miembros pertenecientes a un equipo de SCRUM.
+* **TEAM =>** Representa el equipo de SCRUM
+* **PROJECT =>** Representa el proyecto de software sobre el qué se va a realizar el seguimiento.
+* **PBI =>** Representa a los Product Backlog Items que componen las funcionalidades a realizar en un proyecto. 
+* **SPRINT =>** Representa las iteraciones realizadas sobre un proyecto.
+* **TASK =>** Representa las tareas realizadas en un PBI.
 
 #### Relaciones
 
-- BELONGS_TO => Relación entre los nodos USER y TEAM,  indica que usuarios de la aplicación pertenecen a un equipo de SCRUM.
-- WORKS_ON => Relación entre los nodos TEAM y PROJECT,  indica el equipo responsable de un proyecto.
-- IS_DEFINED_BY => Relación entre los nodos PROJECT y PBI, indica las funcionalidades (PBI) con las qué está compuesta un proyecto de software.
-- IS_COMPOSED_OF => Relación entre los nodos PROJECT y SPRINT, indica las iteraciones  necesarias para la realización del proyecto de software.
-- IS_COMPOSED_BY => Relación entre los nodos SPRINT y PBI, indica cuales funcionalidades se trabajan sobre una iteración del proyecto de software. 
-- IS_PERFORMED_BY => Relación entre los nodos PBI y TASK, indica las tareas necesarias para realizar una funcionalidad.
+- **BELONGS_TO =>** Relación entre los nodos USER y TEAM,  indica que usuarios de la aplicación pertenecen a un equipo de SCRUM.
+- **WORKS_ON =>** Relación entre los nodos TEAM y PROJECT,  indica el equipo responsable de un proyecto.
+- **IS_DEFINED_BY =>** Relación entre los nodos PROJECT y PBI, indica las funcionalidades (PBI) con las qué está compuesta un proyecto de software.
+- **IS_COMPOSED_OF =>** Relación entre los nodos PROJECT y SPRINT, indica las iteraciones  necesarias para la realización del proyecto de software.
+- **IS_COMPOSED_BY =>** Relación entre los nodos SPRINT y PBI, indica cuales funcionalidades se trabajan sobre una iteración del proyecto de software. 
+- **IS_PERFORMED_BY =>** Relación entre los nodos PBI y TASK, indica las tareas necesarias para realizar una funcionalidad.
 
 #### Atributos
 
@@ -99,11 +99,11 @@ Los constraints nos permiten tener valores únicos sobre las propiedades de los 
 
 Se definieron los siguientes constraints:
 
-- Nodo USER: Se define constraint sobre la propiedad email.
-- Nodo PROJECT: Se define constraint sobre la propiedad code.
-- Nodo PBI: Se define constraint sobre la propiedad code.
-- Nodo SPRINT: Se define constraint sobre la propiedad code.
-- Nodo TASK: Se define constraint sobre la propiedad code.
+- **Nodo USER:** Se define constraint sobre la propiedad email.
+- **Nodo PROJECT:** Se define constraint sobre la propiedad code.
+- **Nodo PBI:** Se define constraint sobre la propiedad code.
+- **Nodo SPRINT:** Se define constraint sobre la propiedad code.
+- **Nodo TASK:** Se define constraint sobre la propiedad code.
 
 ## RESTful services
 
@@ -112,8 +112,8 @@ El proyecto cuenta con los siguientes RESTful services:
 
 ## ScrumGraph Services
 + **[User's Request](#user-request)**<br>
-   >  **[Create](#create-an-user)**
-   >  **[Find All](#get-all-users)**
+   >+ **[Create](#create-an-user)**
+   >+ **[Find All](#get-all-users)**
 
 
 ## User Request
