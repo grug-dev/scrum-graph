@@ -14,16 +14,17 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
 ### Branch 1.0.X
   * Spring Boot 1.5.9.RELEASE
   * Spring Framework 4.3
-  * Spring Jersey
+  * Spring REST
+  * Spring AOP
   * Spring DATA - Neo4j [2.2.3]
   * Java 8
 
 ### Branch 2.0.X
   * Spring Boot
-  * pring Framework 5
+  * Spring Framework 5
   * Spring REST
-  * Spring DATA - Neo4j
-  * Java 8
+  * Spring DATA - Mongo DB
+  * Java 8-9
 
 ## Modelo 
 
