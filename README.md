@@ -107,7 +107,7 @@ Se definieron los siguientes constraints:
 
 ## RESTful services
 
-** [En Construcción] **
+**[En Construcción]**
 El proyecto cuenta con los siguientes RESTful services:
 
 ## ScrumGraph Services
