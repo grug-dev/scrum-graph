@@ -15,7 +15,7 @@ public class ResponseDTO  implements Serializable {
 	
 	private String status = ECodeResponse.OK.getStatus();
 	
-	private String errorMsg;
+	private String errorMsg = "";
 	
 	private int code;
 	

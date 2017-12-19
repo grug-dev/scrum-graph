@@ -11,44 +11,42 @@ import com.kkpa.scrumgraph.constants.ECodeResponse;
 import com.kkpa.scrumgraph.dto.ResponseDTO;
 
 @RestControllerAdvice
-public class RestControllerAdviceSG {
+public class SGRestControllerAdvice {
 
 	@Autowired
 	private ApplicationContext appCtx;
 	
-	@ExceptionHandler(SGException.class)
-	public ResponseDTO handleRequestException(SGException ex) {
-		ResponseDTO respDTO = (ResponseDTO) appCtx.getBean("responseDTO");
-		
-		respDTO.setErrorMsg(ex.getMessage());
-		respDTO.setCode(ECodeResponse.ERROR_CODE.getCode());
-		respDTO.setStatus(ECodeResponse.ERROR_CODE.getStatus());
-		
-		return respDTO;
-	}
 	
 	@ExceptionHandler( { CannotCreateTransactionException.class , HttpRequestException.class })
 	public ResponseDTO handleRequestException() {
 		ResponseDTO respDTO = (ResponseDTO) appCtx.getBean("responseDTO");
 		
-		respDTO.setErrorMsg("La conexión ha fallado Catched");
-		respDTO.setCode(404);
-		respDTO.setStatus("ERROR");
-		
-		return respDTO;
-	}
-	
-	@ExceptionHandler(Exception.class)
-	public ResponseDTO handleRequestException(Exception reqEx) {
-		ResponseDTO respDTO = (ResponseDTO) appCtx.getBean("responseDTO");
-		
-		respDTO.setErrorMsg("Ha ocurrido un error inesperado. Por favor intenta más tarde mientras solucionamos el problema");
+		respDTO.setErrorMsg("La conexión a la base de datos ha fallado");
 		respDTO.setCode(ECodeResponse.ERROR_CODE.getCode());
 		respDTO.setStatus(ECodeResponse.ERROR_CODE.getStatus());
 		
 		return respDTO;
 	}
 	
+	@ExceptionHandler(Exception.class)
+	public ResponseDTO handleRequestException(Exception ex) {
+		ResponseDTO respDTO = (ResponseDTO) appCtx.getBean("responseDTO");
+		
+		if (ex.getCause() instanceof SGException) { 
+			SGException sgException = (SGException) ex.getCause();
+			respDTO.setErrorMsg(sgException.getMessage());
+			respDTO.setCode(sgException.getCode());
+			respDTO.setStatus(ECodeResponse.ERROR_CODE.getStatus());
+			
+			return respDTO;
+		}
+		
+		respDTO.setErrorMsg("Internal Error");
+		respDTO.setCode(ECodeResponse.ERROR_CODE.getCode());
+		respDTO.setStatus(ECodeResponse.ERROR_CODE.getStatus());
+		
+		return respDTO;
+	}
 	
 	
 }

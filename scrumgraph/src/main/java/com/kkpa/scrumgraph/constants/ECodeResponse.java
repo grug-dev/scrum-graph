@@ -9,6 +9,14 @@ public enum ECodeResponse {
 	INVALID_FIELDS( 203 ,"Invalid Fields"),
 	INVALID_REQ_PAYLOAD( 204 ,"Invalid Request PayLoad"),
 	
+	// USER CODES
+	INVALID_EMAIL(310, "Invalid Email"),
+	UNAUTHENTICATED_USER(311, "Unauthenticated user"),
+	UNAUTHORIZED_USER(312, "Unauthorized user"),
+	EMAIL_ALREADY_EXISTS(313, "Email already exists"),
+	USER_DOESNT_EXISTS(314, "User doesn't exists"),
+	USER_UNAVAILABLE(315, "User unavailable "),
+	
 	;
 	
 	private int code;

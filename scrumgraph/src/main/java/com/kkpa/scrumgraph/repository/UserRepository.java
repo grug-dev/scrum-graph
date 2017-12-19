@@ -6,6 +6,6 @@ import com.kkpa.scrumgraph.entities.User;
 
 public interface UserRepository extends Neo4jRepository<User, Long> {
 
-	
+	User findByAuthToken(String authToken);
 	
 }
