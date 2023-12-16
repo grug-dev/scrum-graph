@@ -1,21 +1,20 @@
 ## Table of Contents
 + **[ScrumGraph](#scrumgraph)**<br>
 + **[Branch Info](#branch-info)**
-+ **[Modelo](#modelo)**
-> + **[Elementos del modelo](#elementos-del-modelo)**
++ **[Design](#design)**
 + **[Constraints](#constraints)**
-+ **[RESTful services](#restful-services)**
 
 # ScrumGraph 
 
-Este proyecto corresponde al backend de la aplicación web construida como proyecto de grado.
+This project corresponds to the backend of the web application built as a degree project.
 
-**SCRUMGRAPH** publica una serie de recursos de RESTful web services relacionados con los elementos claves en el framework de Scrum,  con el objetivo de almacenar dichos elementos en grafos para dar un apoyo en la toma de decisiones en los compromisos a adquirir en la planificación de futuros Sprints, basandose en la información registrada en cada Nodo.
+**SCRUMGRAPH** publishes a series of RESTful web services resources related to the key elements in the Scrum framework, to store these elements in graphs to support decision-making in the commitments to be acquired in the planning of future Sprints, based on the information recorded in each Node.
+
 
 ## Branch Info
 
 ### TAG 0.0.1
-   * Servicios RESTful construidos con jersey.
+   * RESTful services built with jersey.
    * Neo4j - (Graph Database)
    * Java 7
 
@@ -34,60 +33,55 @@ Este proyecto corresponde al backend de la aplicación web construida como proye
   * Spring DATA - Mongo DB
   * Java 8-9
 
-## Modelo 
+## Design 
 
-La ejecución de proyectos de desarrollo de software basados en el marco de trabajo SCRUM requiere de la realización de un control y/o seguimiento.  La base de datos que se plantea para este contexto se centra en la información relacionada a los elementos más relevantes de SCRUM que intervienen en el proceso de la construcción de incrementos funcionales de un producto software.  Estos elementos son: Usuarios, Proyectos, Sprints, Product Backlog Items (PBI) y Tareas.
+The execution of software development projects based on the SCRUM framework requires the realization of a control and/or follow-up.  The database proposed for this context focuses on the information related to the most relevant SCRUM elements involved in the process of building functional increments of a software product.  These elements are Users, Projects, Sprints, Product Backlog Items (PBI) and Tasks.
 
-Un usuario pertenece a un equipo de SCRUM, el equipo trabaja sobre un proyecto. Un proyecto está compuesto por Sprints y a su vez está definido por los Product Back Log Items. Un Sprint trabaja sobre una serie de PBI’s.  Un PBI se realiza mediante un conjunto de tareas.
+A user belongs to a SCRUM team, the team works on a project. A project is composed of Sprints and in turn, is defined by Product Back Log Items. A Sprint works on a series of PBIs.  A PBI is performed by a set of tasks.
 
-El esquema del modelo de la base de datos en grafo del dominio de la aplicación es el mostrado en la siguiente imagen:
+The schema of the application domain network database model is shown in the following image:
 
 ![alt text](img/modelodominio.png)
 
-### Elementos del modelo
+### Model elements
 
-#### Nodos
+#### Nodes
 
-* **USER =>** Representa los usuarios o miembros pertenecientes a un equipo de SCRUM.
-* **TEAM =>** Representa el equipo de SCRUM
-* **PROJECT =>** Representa el proyecto de software sobre el qué se va a realizar el seguimiento.
-* **PBI =>** Representa a los Product Backlog Items que componen las funcionalidades a realizar en un proyecto. 
-* **SPRINT =>** Representa las iteraciones realizadas sobre un proyecto.
-* **TASK =>** Representa las tareas realizadas en un PBI.
+* **USER =>** Represents the users or members belonging to a SCRUM team.
+* **TEAM =>** Represents the SCRUM team
+* **PROJECT =>** Represents the software project to be tracked.
+* **PBI =>** Represents the Product Backlog Items that make up the functionalities to be carried out in a project.
+* **SPRINT =>** Represents the iterations carried out on a project.
+* **TASK =>** Represents the tasks performed in a PBI.
 
-#### Relaciones
+#### Relationships
 
-- **BELONGS_TO =>** Relación entre los nodos USER y TEAM,  indica que usuarios de la aplicación pertenecen a un equipo de SCRUM.
-- **WORKS_ON =>** Relación entre los nodos TEAM y PROJECT,  indica el equipo responsable de un proyecto.
-- **IS_DEFINED_BY =>** Relación entre los nodos PROJECT y PBI, indica las funcionalidades (PBI) con las qué está compuesta un proyecto de software.
-- **IS_COMPOSED_OF =>** Relación entre los nodos PROJECT y SPRINT, indica las iteraciones  necesarias para la realización del proyecto de software.
-- **IS_COMPOSED_BY =>** Relación entre los nodos SPRINT y PBI, indica cuales funcionalidades se trabajan sobre una iteración del proyecto de software. 
-- **IS_PERFORMED_BY =>** Relación entre los nodos PBI y TASK, indica las tareas necesarias para realizar una funcionalidad.
+- **BELONGS_TO =>** Relationship between the USER and TEAM nodes, indicates which application users belong to a SCRUM team.
+- **WORKS_ON =>** Relationship between TEAM and PROJECT nodes, indicates the team responsible for a project.
+- **IS_DEFINED_BY =>** Relationship between the PROJECT and PBI nodes, indicates the functionalities (PBI) with which a software project is composed.
+- **IS_COMPOSED_OF =>** Relationship between the PROJECT and SPRINT nodes, indicates the iterations necessary to carry out the software project.
+- **IS_COMPOSED_BY =>** Relationship between the SPRINT and PBI nodes, indicates which functionalities are worked on in an iteration of the software project.
+- **IS_PERFORMED_BY =>** Relationship between the PBI and TASK nodes, indicates the tasks necessary to perform a functionality.
 
-#### Atributos
+#### Attributes
 
-Los atributos son las propiedades clave-valor establecidas en cada nodo del modelo de la base de datos orientada a grafos.
-A continuación se exponen los atributos definidos para cada uno de los nodos.
+Attributes are the key-value properties set on each node of the graph-oriented database model.
+Below are the attributes defined for each of the nodes.
 
   ![alt text](img/attr_user.png)
   
 
-
   ![alt text](img/attr_team.png)
   
-
 
   ![alt text](img/attr_project.png)
   
 
-
   ![alt text](img/attr_pbi.png)
   
 
-
   ![alt text](img/attr_sprint.png)
   
-
 
   ![alt text](img/attr_task.png)
   
@@ -95,25 +89,15 @@ A continuación se exponen los atributos definidos para cada uno de los nodos.
 
 #### Constraints
 
-Los constraints nos permiten tener valores únicos sobre las propiedades de los nodos con la misma especificación de label. 
+Constraints allow us to have unique values on the properties of nodes with the same label specification.
 
-Se definieron los siguientes constraints:
+The following constraints were defined:
 
-- **Nodo USER:** Se define constraint sobre la propiedad email.
-- **Nodo PROJECT:** Se define constraint sobre la propiedad code.
-- **Nodo PBI:** Se define constraint sobre la propiedad code.
-- **Nodo SPRINT:** Se define constraint sobre la propiedad code.
-- **Nodo TASK:** Se define constraint sobre la propiedad code.
-
-## RESTful services
-
-**[En Construcción]**
-El proyecto cuenta con los siguientes RESTful services:
-
-## ScrumGraph Services
-+ **[User's Request](#user-request)**<br>
-   >+ **[Create](#create-an-user)**
-   >+ **[Find All](#get-all-users)**
+- **USER node:** Constraint is defined on the email property.
+- **PROJECT node:** Constraint is defined on the code property.
+- **PBI node:** Constraint is defined on the code property.
+- **SPRINT node:** Constraint is defined on the code property.
+- **TASK node:** Constraint is defined on the code property.
 
 
 ## User Request
@@ -210,5 +194,3 @@ El proyecto cuenta con los siguientes RESTful services:
 ```
 
 
-
-**Pendiente de generar la documentación de los servicios**
