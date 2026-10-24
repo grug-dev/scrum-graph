@@ -24,17 +24,23 @@ Other branches:
 You need Java 8, Maven and a running Neo4j 3.x server.
 
 1. Start Neo4j. By default the app connects to `http://localhost:7474`.
-2. Run the Cypher in `docs/SCRIPT_INSTALLATION` to create the constraints,
-   the indexes and the default admin user.
-3. Optional: run `docs/SCRIT_BD_DUMMIE.txt` to load sample data.
+2. Run the Cypher in `docs/install.cypher` to create the constraints,
+   the indexes and the admin user. First replace `<SET-A-RANDOM-TOKEN>`
+   and `<SET-A-PASSWORD>` with your own values. A random token example:
+   `openssl rand -hex 16`.
+3. Optional: run `docs/sample-data.cypher` to load sample data.
+   Its tokens are public, so use it only on a local database.
 4. Start the app:
 
 ```bash
 cd scrumgraph
-export NEO4J_USERNAME=neo4j        # default: neo4j
-export NEO4J_PASSWORD=your-password # default: adminneo4j
+export NEO4J_USERNAME=neo4j          # default: neo4j
+export NEO4J_PASSWORD=your-password  # required, no default
 mvn spring-boot:run
 ```
+
+`NEO4J_PASSWORD` has no default. Without it, the app stops at start.
+`scrumgraph/.env.example` lists all the variables.
 
 The API runs at `http://localhost:8585/scrumgraph/sgrest`.
 To use another Neo4j URI, set `SPRING_DATA_NEO4J_URI`.
@@ -45,6 +51,9 @@ To use another Neo4j URI, set `SPRING_DATA_NEO4J_URI`.
 cd scrumgraph
 mvn test
 ```
+
+JaCoCo writes the coverage report to `target/site/jacoco/index.html`.
+CI prints the line coverage in the job summary.
 
 The unit tests need no database. `ScrumgraphApplicationTests` starts the
 full app and needs Neo4j, so it is skipped by default. Run it with
@@ -64,6 +73,8 @@ X-ScrumGraph-Header: {"authToken": "<token>"}
 ```
 
 The token must match the `authToken` of a `USER` node.
+`auth/AuthTokenInterceptor.java` checks it before each controller method
+marked with `@ValidateAuthToken`.
 
 ### Endpoints
 
@@ -161,8 +172,34 @@ These properties are unique per label:
 - **USER**: `email`
 - **PROJECT**, **PBI**, **SPRINT**, **TASK**: `code`
 
+## Decisions and trade-offs
+
+- **Neo4j instead of a relational database.** The data is a graph:
+  users, teams, projects, sprints, PBIs and tasks. Cost: fewer tools,
+  and no schema migrations.
+- **A JSON header for the token, not `Authorization: Bearer`.** It is the
+  original 2015 design. Cost: it is not standard, so clients must set it by hand.
+- **One interceptor checks the token.** Services never get the token.
+  Cost: a controller method without `@ValidateAuthToken` is public.
+- **One `@RestControllerAdvice` for all errors.** Each error has an HTTP status
+  and an app code in one enum. Cost: the enum grows with every new error.
+- **Old stack on purpose.** This branch keeps Spring Boot 1.5 and Java 8.
+  Cost: these versions are end-of-life and get no security fixes.
+
+## Limits
+
+- Only `GET /users` exists on this branch.
+- Tokens never expire. There is no login endpoint.
+- The Cypher scripts store passwords as plain text.
+- CORS allows any origin.
+- `ScrumgraphApplicationTests` needs Neo4j, so CI skips it.
+
+## License
+
+MIT. See `LICENSE`.
+
 ## Docs
 
-- `docs/SCRIPT_INSTALLATION`: constraints, indexes and the admin user.
-- `docs/SCRIT_BD_DUMMIE.txt`: sample data with fake users.
-- `docs/REST Definiciones.txt`: early notes about the planned REST resources (Spanish).
+- `docs/install.cypher`: constraints, indexes and the admin user.
+- `docs/sample-data.cypher`: sample data with fake users.
+- `docs/rest-notes-es.txt`: early notes about the planned REST resources (Spanish).

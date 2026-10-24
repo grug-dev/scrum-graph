@@ -20,7 +20,7 @@ public class ScrumHeaderDTO implements Serializable {
 
 	/**
 	 * Transform the JSON of the HTTP header into a ScrumHeaderDTO.
-	 * Spring MVC calls this method to convert the header value.
+	 * AuthTokenInterceptor calls this method to read the header value.
 	 * A missing or non text "authToken" gives a null token.
 	 * @param sgHeader JSON text of the HTTP header
 	 * @return ScrumHeaderDTO with the header's info, never null

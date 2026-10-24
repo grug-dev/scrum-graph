@@ -2,15 +2,13 @@ package com.kkpa.scrumgraph.controllers;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kkpa.scrumgraph.auth.ValidateAuthToken;
 import com.kkpa.scrumgraph.constants.ECodeResponse;
 import com.kkpa.scrumgraph.dto.ResponseDTO;
-import com.kkpa.scrumgraph.dto.ScrumHeaderDTO;
 import com.kkpa.scrumgraph.dto.UserCollectionDTO;
-import com.kkpa.scrumgraph.exceptionhandler.SGException;
 import com.kkpa.scrumgraph.services.UserService;
 
 @RestController
@@ -23,11 +21,11 @@ public class UserController {
 		this.userService = userService;
 	}
 
+	@ValidateAuthToken
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseDTO getUsers(@RequestHeader(ScrumHeaderDTO.HEADER_NAME) ScrumHeaderDTO scrumGraphHeader)
-			throws SGException {
+	public ResponseDTO getUsers() {
 		UserCollectionDTO userCollectionDTO = new UserCollectionDTO();
-		userCollectionDTO.setLstUsers(userService.getAllUsers(scrumGraphHeader.getAuthToken()));
+		userCollectionDTO.setLstUsers(userService.getAllUsers());
 
 		ResponseDTO respDTO = new ResponseDTO();
 		respDTO.setResponse(userCollectionDTO);

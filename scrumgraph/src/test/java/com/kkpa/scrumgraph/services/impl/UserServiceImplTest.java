@@ -64,7 +64,7 @@ public class UserServiceImplTest {
 		when(userRepo.findAll()).thenReturn(users);
 		when(userConverter.convertCollection(users)).thenReturn(dtos);
 
-		assertSame(dtos, userService.getAllUsers("token"));
+		assertSame(dtos, userService.getAllUsers());
 	}
 
 	@Test
@@ -74,7 +74,7 @@ public class UserServiceImplTest {
 		when(userRepo.findAll()).thenReturn(noUsers);
 		when(userConverter.convertCollection(noUsers)).thenReturn(noDtos);
 
-		assertEquals(0, userService.getAllUsers("token").size());
+		assertEquals(0, userService.getAllUsers().size());
 	}
 
 }
