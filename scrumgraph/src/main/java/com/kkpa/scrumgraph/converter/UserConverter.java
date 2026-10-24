@@ -10,36 +10,26 @@ import org.springframework.stereotype.Component;
 import com.kkpa.scrumgraph.dto.UserDTO;
 import com.kkpa.scrumgraph.entities.User;
 
-@Component("usrConverter")
-public class UserConverter implements ScrumGraphConverter<UserDTO,User> {
+@Component
+public class UserConverter implements ScrumGraphConverter<UserDTO, User> {
 
-	private ModelMapper mapper = new ModelMapper();
-	
-	private Type targetListType = new TypeToken<List<UserDTO>>(){}.getType();
+	private static final Type TARGET_LIST_TYPE = new TypeToken<List<UserDTO>>() {}.getType();
+
+	private final ModelMapper mapper = new ModelMapper();
 
 	@Override
 	public UserDTO convertToDTO(User entity) {
-		UserDTO dto = null;
-		
-		dto = mapper.map(entity, UserDTO.class);
-		
-		return dto;
-	
+		return mapper.map(entity, UserDTO.class);
 	}
 
 	@Override
 	public User convertToEntity(UserDTO dto) {
-		User u = null;
-		
-		u = mapper.map(dto, User.class);
-		
-		return u;
+		return mapper.map(dto, User.class);
 	}
 
 	@Override
 	public List<UserDTO> convertCollection(List<User> lstEntities) {
-		return mapper.map(lstEntities, targetListType);
+		return mapper.map(lstEntities, TARGET_LIST_TYPE);
 	}
-	
 
 }

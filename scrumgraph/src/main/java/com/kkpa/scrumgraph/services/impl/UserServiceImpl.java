@@ -1,9 +1,8 @@
 package com.kkpa.scrumgraph.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.kkpa.scrumgraph.aop.LogExecutionTime;
@@ -14,35 +13,33 @@ import com.kkpa.scrumgraph.entities.User;
 import com.kkpa.scrumgraph.repository.UserRepository;
 import com.kkpa.scrumgraph.services.UserService;
 
-@Service("userSrv")
-public class UserServiceImpl implements UserService  {
+@Service
+public class UserServiceImpl implements UserService {
 
-	
-	@Autowired
-	private UserRepository userRepo;
+	private final UserRepository userRepo;
 
-	@Autowired
-	@Qualifier("usrConverter")
-	private ScrumGraphConverter<UserDTO, User> userConverter;
-	
+	private final ScrumGraphConverter<UserDTO, User> userConverter;
 
+	public UserServiceImpl(UserRepository userRepo, ScrumGraphConverter<UserDTO, User> userConverter) {
+		this.userRepo = userRepo;
+		this.userConverter = userConverter;
+	}
+
+	/** The auth token is checked by ValidateAuthTokenAspect. */
 	@LogExecutionTime
 	@ValidateAuthToken
 	@Override
 	public List<UserDTO> getAllUsers(String authToken) {
-			List<User> lstUsers = (List<User>) userRepo.findAll(); 
-			return userConverter.convertCollection(lstUsers);	
+		List<User> lstUsers = new ArrayList<>();
+		for (User user : userRepo.findAll()) {
+			lstUsers.add(user);
+		}
+		return userConverter.convertCollection(lstUsers);
 	}
-
 
 	@Override
 	public boolean validateToken(String authToken) {
-		
-		if (authToken == null) {
-			return false;
-		}
-		
-		return userRepo.findByAuthToken(authToken) != null ? true : false;
+		return authToken != null && userRepo.findByAuthToken(authToken) != null;
 	}
 
 }

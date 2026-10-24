@@ -1,35 +1,52 @@
 package com.kkpa.scrumgraph.dto;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.Map;
 
-import com.kkpa.scrumgraph.util.SGUtil;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ScrumHeaderDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	/** Name of the HTTP header that holds this JSON. */
 	public static final String HEADER_NAME = "X-ScrumGraph-Header";
 
+	/** ObjectMapper is thread safe once it is set up, so one instance is shared. */
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+
 	private String authToken;
-	
+
 	/**
-	 * Transform HTTP Request JSON Header into an ScrumHeaderDTO Object.
-	 * @param sgHeader String HTTP Request Header
-	 * @return ScrumHeaderDTO Object with the Header's info
+	 * Transform the JSON of the HTTP header into a ScrumHeaderDTO.
+	 * Spring MVC calls this method to convert the header value.
+	 * A missing or non text "authToken" gives a null token.
+	 * @param sgHeader JSON text of the HTTP header
+	 * @return ScrumHeaderDTO with the header's info, never null
+	 * @throws IllegalArgumentException when the header is not a JSON object
 	 */
 	public static ScrumHeaderDTO valueOf(String sgHeader) {
-		ScrumHeaderDTO shDTO = null; 
-		
 		if (sgHeader == null) {
-			return null;
+			throw new IllegalArgumentException(HEADER_NAME + " is missing");
 		}
-		
-		Map<String, Object> map = SGUtil.transformJSON(sgHeader);
-		shDTO = new ScrumHeaderDTO();		
-		shDTO.setAuthToken(map.getOrDefault("authToken", "emptyAuthToken").toString());
-		
+
+		JsonNode root;
+		try {
+			root = MAPPER.readTree(sgHeader);
+		} catch (IOException e) {
+			throw new IllegalArgumentException(HEADER_NAME + " is not valid JSON", e);
+		}
+
+		if (root == null || !root.isObject()) {
+			throw new IllegalArgumentException(HEADER_NAME + " must be a JSON object");
+		}
+
+		JsonNode token = root.get("authToken");
+		ScrumHeaderDTO shDTO = new ScrumHeaderDTO();
+		shDTO.setAuthToken(token != null && token.isTextual() ? token.textValue() : null);
+
 		return shDTO;
-		
 	}
 
 	public String getAuthToken() {
@@ -39,5 +56,5 @@ public class ScrumHeaderDTO implements Serializable {
 	public void setAuthToken(String authToken) {
 		this.authToken = authToken;
 	}
-	
+
 }
