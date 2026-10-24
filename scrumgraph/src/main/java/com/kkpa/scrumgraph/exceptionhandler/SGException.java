@@ -16,6 +16,12 @@ public class SGException extends Exception {
 		this.codeResponse = codeResponse;
 	}
 
+	/** Use it when the client needs more detail than the code's default text. */
+	public SGException(ECodeResponse codeResponse, String message) {
+		super(message);
+		this.codeResponse = codeResponse;
+	}
+
 	public ECodeResponse getCodeResponse() {
 		return codeResponse;
 	}

@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.kkpa.scrumgraph.aop.LogExecutionTime;
-import com.kkpa.scrumgraph.aop.ValidateAuthToken;
 import com.kkpa.scrumgraph.converter.ScrumGraphConverter;
 import com.kkpa.scrumgraph.dto.UserDTO;
 import com.kkpa.scrumgraph.entities.User;
@@ -25,11 +24,9 @@ public class UserServiceImpl implements UserService {
 		this.userConverter = userConverter;
 	}
 
-	/** The auth token is checked by ValidateAuthTokenAspect. */
 	@LogExecutionTime
-	@ValidateAuthToken
 	@Override
-	public List<UserDTO> getAllUsers(String authToken) {
+	public List<UserDTO> getAllUsers() {
 		List<User> lstUsers = new ArrayList<>();
 		for (User user : userRepo.findAll()) {
 			lstUsers.add(user);
