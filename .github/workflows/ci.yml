@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ "1.0.X" ]
+  pull_request:
+    branches: [ "1.0.X" ]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scrumgraph
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+          cache-dependency-path: scrumgraph/pom.xml
+
+      # The Maven wrapper in the repo is old, so use the runner's Maven.
+      - name: Run tests
+        run: mvn -B -ntp test
