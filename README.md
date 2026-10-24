@@ -25,8 +25,11 @@ You need Java 8, Maven and a running Neo4j 3.x server.
 
 1. Start Neo4j. By default the app connects to `http://localhost:7474`.
 2. Run the Cypher in `docs/SCRIPT_INSTALLATION` to create the constraints,
-   the indexes and the default admin user.
+   the indexes and the admin user. First replace `<SET-A-RANDOM-TOKEN>`
+   and `<SET-A-PASSWORD>` with your own values. A random token example:
+   `openssl rand -hex 16`.
 3. Optional: run `docs/SCRIT_BD_DUMMIE.txt` to load sample data.
+   Its tokens are public, so use it only on a local database.
 4. Start the app:
 
 ```bash

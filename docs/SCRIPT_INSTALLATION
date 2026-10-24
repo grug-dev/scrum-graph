@@ -13,8 +13,9 @@ CREATE INDEX ON :SPRINT(id)
 CREATE INDEX ON :TASK(id)
 
 // Creacion de usuario Admin True por defecto
+// Replace <SET-A-RANDOM-TOKEN> and <SET-A-PASSWORD> before you run it.
 CREATE 
-(u0:USER { name:"SUPER ADMIN SG", lastName:"SCRUM GRAPH", email:"superadminsg@example.com", isAdmin:true , available:true, authToken: "b24212354022337c4040c8" , password : "superadminsg" , rolDefault : "scrum" ,  createAt : timestamp() , lastModification : timestamp()})
+(u0:USER { name:"SUPER ADMIN SG", lastName:"SCRUM GRAPH", email:"superadminsg@example.com", isAdmin:true , available:true, authToken: "<SET-A-RANDOM-TOKEN>" , password : "<SET-A-PASSWORD>" , rolDefault : "scrum" ,  createAt : timestamp() , lastModification : timestamp()})
 
 
 
