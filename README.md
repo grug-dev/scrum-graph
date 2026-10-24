@@ -73,6 +73,8 @@ X-ScrumGraph-Header: {"authToken": "<token>"}
 ```
 
 The token must match the `authToken` of a `USER` node.
+`auth/AuthTokenInterceptor.java` checks it before each controller method
+marked with `@ValidateAuthToken`.
 
 ### Endpoints
 
@@ -169,6 +171,32 @@ These properties are unique per label:
 
 - **USER**: `email`
 - **PROJECT**, **PBI**, **SPRINT**, **TASK**: `code`
+
+## Decisions and trade-offs
+
+- **Neo4j instead of a relational database.** The data is a graph:
+  users, teams, projects, sprints, PBIs and tasks. Cost: fewer tools,
+  and no schema migrations.
+- **A JSON header for the token, not `Authorization: Bearer`.** It is the
+  original 2015 design. Cost: it is not standard, so clients must set it by hand.
+- **One interceptor checks the token.** Services never get the token.
+  Cost: a controller method without `@ValidateAuthToken` is public.
+- **One `@RestControllerAdvice` for all errors.** Each error has an HTTP status
+  and an app code in one enum. Cost: the enum grows with every new error.
+- **Old stack on purpose.** This branch keeps Spring Boot 1.5 and Java 8.
+  Cost: these versions are end-of-life and get no security fixes.
+
+## Limits
+
+- Only `GET /users` exists on this branch.
+- Tokens never expire. There is no login endpoint.
+- The Cypher scripts store passwords as plain text.
+- CORS allows any origin.
+- `ScrumgraphApplicationTests` needs Neo4j, so CI skips it.
+
+## License
+
+MIT. See `LICENSE`.
 
 ## Docs
 
