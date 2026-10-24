@@ -31,10 +31,13 @@ You need Java 8, Maven and a running Neo4j 3.x server.
 
 ```bash
 cd scrumgraph
-export NEO4J_USERNAME=neo4j        # default: neo4j
-export NEO4J_PASSWORD=your-password # default: adminneo4j
+export NEO4J_USERNAME=neo4j          # default: neo4j
+export NEO4J_PASSWORD=your-password  # required, no default
 mvn spring-boot:run
 ```
+
+`NEO4J_PASSWORD` has no default. Without it, the app stops at start.
+`scrumgraph/.env.example` lists all the variables.
 
 The API runs at `http://localhost:8585/scrumgraph/sgrest`.
 To use another Neo4j URI, set `SPRING_DATA_NEO4J_URI`.
