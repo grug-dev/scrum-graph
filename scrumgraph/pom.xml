@@ -43,12 +43,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.kkpa</groupId>
-			<artifactId>scrumgraph-persistence</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-neo4j</artifactId>
 		</dependency>
@@ -70,13 +64,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<repositories>
-		<repository>
-			<id>spring-releases</id>
-			<name>Spring Releases</name>
-			<url>https://repo.spring.io/libs-release</url>
-		</repository>
-	</repositories>
 
 </project>

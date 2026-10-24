@@ -7,6 +7,9 @@ import com.kkpa.scrumgraph.util.SGUtil;
 
 public class ScrumHeaderDTO implements Serializable {
 
+	/** Name of the HTTP header that holds this JSON. */
+	public static final String HEADER_NAME = "X-ScrumGraph-Header";
+
 	private String authToken;
 	
 	/**
