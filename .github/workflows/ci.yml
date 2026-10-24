@@ -29,3 +29,9 @@ jobs:
       # The Maven wrapper in the repo is old, so use the runner's Maven.
       - name: Run tests
         run: mvn -B -ntp test
+
+      - name: Coverage summary
+        run: |
+          awk -F, 'NR > 1 { missed += $8; covered += $9 }
+            END { printf "Line coverage: %.1f%% (%d of %d lines)\n", 100 * covered / (missed + covered), covered, missed + covered }' \
+            target/site/jacoco/jacoco.csv | tee -a "$GITHUB_STEP_SUMMARY"

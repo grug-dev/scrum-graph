@@ -52,6 +52,9 @@ cd scrumgraph
 mvn test
 ```
 
+JaCoCo writes the coverage report to `target/site/jacoco/index.html`.
+CI prints the line coverage in the job summary.
+
 The unit tests need no database. `ScrumgraphApplicationTests` starts the
 full app and needs Neo4j, so it is skipped by default. Run it with
 `mvn test -Dscrumgraph.it=true`.
