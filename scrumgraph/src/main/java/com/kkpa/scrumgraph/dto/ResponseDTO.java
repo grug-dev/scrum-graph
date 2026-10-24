@@ -2,16 +2,13 @@ package com.kkpa.scrumgraph.dto;
 
 import java.io.Serializable;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.kkpa.scrumgraph.constants.ECodeResponse;
 
-@Component("responseDTO")
-@Scope("prototype")
-public class ResponseDTO  implements Serializable {
+public class ResponseDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 	
 	private String status = ECodeResponse.OK.getStatus();
 	

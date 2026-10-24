@@ -3,14 +3,11 @@ package com.kkpa.scrumgraph.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Component("userCollection")
-@Scope("prototype")
 public class UserCollectionDTO implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@JsonProperty("users")
 	private List<UserDTO> lstUsers;

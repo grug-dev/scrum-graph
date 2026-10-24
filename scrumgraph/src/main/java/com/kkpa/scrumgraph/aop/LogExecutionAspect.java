@@ -13,18 +13,19 @@ public class LogExecutionAspect {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(LogExecutionAspect.class);
 	
-	@Around("@annotation(LogExecutionTime)")
+	@Around("@annotation(com.kkpa.scrumgraph.aop.LogExecutionTime)")
 	public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 		long start = System.currentTimeMillis();
 		
-		LOGGER.info("INICIO " + joinPoint.getSignature().getDeclaringTypeName() +  " - " + joinPoint.getSignature().getName() + " - " + joinPoint.getArgs()); 
+		// Do not log the arguments: they can hold the auth token.
+		LOGGER.info("Start {}", joinPoint.getSignature().toShortString());
 	    
 		// Execute the method intercepted
 		Object proceed = joinPoint.proceed();
 	 
 	    long executionTime = System.currentTimeMillis() - start;
 	 
-	    LOGGER.info("FIN " + joinPoint.getSignature() + " executed in " + executionTime + "ms");
+	    LOGGER.info("End {} executed in {} ms", joinPoint.getSignature().toShortString(), executionTime);
 	    
 	    return proceed;
 	}
