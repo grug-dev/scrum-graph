@@ -1,162 +1,85 @@
-## Table of Contents
-+ **[ScrumGraph](#scrumgraph)**<br>
-+ **[Branch Info](#branch-info)**
-+ **[Design](#design)**
-+ **[Constraints](#constraints)**
+# ScrumGraph
 
-# ScrumGraph [2015]
+[![CI](https://github.com/grug-dev/scrum-graph/actions/workflows/ci.yml/badge.svg?branch=1.0.X)](https://github.com/grug-dev/scrum-graph/actions/workflows/ci.yml)
 
-This project corresponds to the backend of the web application built as a degree project.
+ScrumGraph is the backend of a web application built as a degree project (2015).
+It is a REST API for the main Scrum elements: users, teams, projects, sprints,
+product backlog items (PBI) and tasks. It stores them as a graph in Neo4j.
+The graph helps a team plan the commitments of future sprints.
 
-**SCRUMGRAPH** publishes a series of RESTful web services resources related to the key elements in the Scrum framework, to store these elements in graphs to support decision-making in the commitments to be acquired in the planning of future Sprints, based on the information recorded in each Node.
+## Stack (branch 1.0.X)
 
+- Java 8
+- Spring Boot 1.5.9 (Spring Framework 4.3, Spring MVC, Spring AOP)
+- Spring Data Neo4j 4.2 (Neo4j OGM 2.1, HTTP driver)
+- JUnit 4 and Mockito for tests
 
-## Branch Info
+Other branches:
 
-### TAG 0.0.1
-   * RESTful services built with jersey.
-   * Neo4j - (Graph Database)
-   * Java 7
+- Tag `0.0.1`: Jersey REST services, Neo4j, Java 7.
+- Branch `2.0.X`: Spring Boot, Spring Framework 5, MongoDB.
 
-### Branch 1.0.X
-  * Spring Boot 1.5.9.RELEASE
-  * Spring Framework 4.3
-  * Spring REST
-  * Spring AOP
-  * Spring DATA - Neo4j [2.2.3]
-  * Java 8
+## Run it
 
-### Branch 2.0.X
-  * Spring Boot
-  * Spring Framework 5
-  * Spring REST
-  * Spring DATA - Mongo DB
-  * Java 8-9
+You need Java 8, Maven and a running Neo4j 3.x server.
 
-## Design 
+1. Start Neo4j. By default the app connects to `http://localhost:7474`.
+2. Run the Cypher in `docs/SCRIPT_INSTALLATION` to create the constraints,
+   the indexes and the default admin user.
+3. Optional: run `docs/SCRIT_BD_DUMMIE.txt` to load sample data.
+4. Start the app:
 
-The execution of software development projects based on the SCRUM framework requires the realization of a control and/or follow-up.  The database proposed for this context focuses on the information related to the most relevant SCRUM elements involved in the process of building functional increments of a software product.  These elements are Users, Projects, Sprints, Product Backlog Items (PBI) and Tasks.
+```bash
+cd scrumgraph
+export NEO4J_USERNAME=neo4j        # default: neo4j
+export NEO4J_PASSWORD=your-password # default: adminneo4j
+mvn spring-boot:run
+```
 
-A user belongs to a SCRUM team, the team works on a project. A project is composed of Sprints and in turn, is defined by Product Back Log Items. A Sprint works on a series of PBIs.  A PBI is performed by a set of tasks.
+The API runs at `http://localhost:8585/scrumgraph/sgrest`.
+To use another Neo4j URI, set `SPRING_DATA_NEO4J_URI`.
 
-The schema of the application domain network database model is shown in the following image:
+## Tests
 
-![alt text](img/modelodominio.png)
+```bash
+cd scrumgraph
+mvn test
+```
 
-### Model elements
+The unit tests need no database. `ScrumgraphApplicationTests` starts the
+full app and needs Neo4j, so it is skipped by default. Run it with
+`mvn test -Dscrumgraph.it=true`.
 
-#### Nodes
+GitHub Actions runs `mvn test` with Java 8 on every push and pull request
+to `1.0.X`.
 
-* **USER =>** Represents the users or members belonging to a SCRUM team.
-* **TEAM =>** Represents the SCRUM team
-* **PROJECT =>** Represents the software project to be tracked.
-* **PBI =>** Represents the Product Backlog Items that make up the functionalities to be carried out in a project.
-* **SPRINT =>** Represents the iterations carried out on a project.
-* **TASK =>** Represents the tasks performed in a PBI.
+## API
 
-#### Relationships
+### Authentication
 
-- **BELONGS_TO =>** Relationship between the USER and TEAM nodes, indicates which application users belong to a SCRUM team.
-- **WORKS_ON =>** Relationship between TEAM and PROJECT nodes, indicates the team responsible for a project.
-- **IS_DEFINED_BY =>** Relationship between the PROJECT and PBI nodes, indicates the functionalities (PBI) with which a software project is composed.
-- **IS_COMPOSED_OF =>** Relationship between the PROJECT and SPRINT nodes, indicates the iterations necessary to carry out the software project.
-- **IS_COMPOSED_BY =>** Relationship between the SPRINT and PBI nodes, indicates which functionalities are worked on in an iteration of the software project.
-- **IS_PERFORMED_BY =>** Relationship between the PBI and TASK nodes, indicates the tasks necessary to perform a functionality.
+Each request sends the header `X-ScrumGraph-Header`. Its value is JSON:
 
-#### Attributes
+```
+X-ScrumGraph-Header: {"authToken": "<token>"}
+```
 
-Attributes are the key-value properties set on each node of the graph-oriented database model.
-Below are the attributes defined for each of the nodes.
+The token must match the `authToken` of a `USER` node.
 
-  ![alt text](img/attr_user.png)
-  
+### Endpoints
 
-  ![alt text](img/attr_team.png)
-  
+| Method | Path     | Description    |
+|--------|----------|----------------|
+| GET    | `/users` | List all users |
 
-  ![alt text](img/attr_project.png)
-  
+Example:
 
-  ![alt text](img/attr_pbi.png)
-  
+```bash
+curl -H 'X-ScrumGraph-Header: {"authToken": "<token>"}' \
+  http://localhost:8585/scrumgraph/sgrest/users
+```
 
-  ![alt text](img/attr_sprint.png)
-  
+Response:
 
-  ![alt text](img/attr_task.png)
-  
-  
-
-#### Constraints
-
-Constraints allow us to have unique values on the properties of nodes with the same label specification.
-
-The following constraints were defined:
-
-- **USER node:** Constraint is defined on the email property.
-- **PROJECT node:** Constraint is defined on the code property.
-- **PBI node:** Constraint is defined on the code property.
-- **SPRINT node:** Constraint is defined on the code property.
-- **TASK node:** Constraint is defined on the code property.
-
-
-## User Request
-
-#### Create an user
-
-###### **Request Info**
-
-  + **Http Method:** POST
-  + **URI:**  ````http://host:port/ScrumGraph/sgrest/users````
-  + **Content-Type:** application/json
-  + **Headers:**  *X-ScrumGraph-Header:* {"authToken": "*token_autogenerated*"}
-  + **Entity Body:**
-  ```json
-      {
-      "name": "Bob",
-      "lastName": "Jones",
-      "email": "bob.jones@example.com",
-      "password": "asassaddsd",
-      "roleDefault": "team-member",
-      "isAdmin": false
-      }
-  ```
-
-###### Response Info
-
-  + **Entity Body:**
-  ```json
-      {
-          "status": "ok",
-          "errorMsg": "",
-          "errorCode": 0,
-          "response": {
-              "user": {
-                  "id": 3,
-                  "name": "Bob",
-                  "lastName": "Jones",
-                  "email": "bob.jones@example.com",
-                  "roleDefault": "team-member",
-                  "available": "true",
-                  "isAdmin": "false",
-                  "authToken": "eea30a4cec3e24441302331"
-              }
-          }
-      }
-  ```
-
-#### Get All Users
-
-###### **Request Info**
-
-+ **Http Method:** GET
-+ **URI:**  ````http://host:port/scrumgraph/sgrest/users````
-+ **Content-Type:** application/json
-+ **Headers:**  *X-ScrumGraph-Header:* {"authToken": "*token_autogenerated*"}
-
-###### Response
-
-+ **Entity Body:**
 ```json
 {
     "status": "OK",
@@ -171,26 +94,75 @@ The following constraints were defined:
                 "email": "superadminsg@example.com",
                 "available": true,
                 "admin": true
-            },
-            {
-                "id": 2,
-                "name": "Carol",
-                "lastName": "Brown",
-                "email": "carol.brown@example.com",
-                "available": true,
-                "admin": false
-            },
-            {
-                "id": 3,
-                "name": "Bob",
-                "lastName": "Jones",
-                "email": "bob.jones@example.com",
-                "available": true,
-                "admin": false
             }
         ]
     }
 }
 ```
 
+### Errors
 
+Errors use the same body. `status` is `error`, `code` is the application code
+and `errorMsg` says what went wrong.
+
+| HTTP status | When                                   | `code` |
+|-------------|----------------------------------------|--------|
+| 400         | The header is missing or is not JSON   | 101    |
+| 401         | The auth token is missing or not valid | 311    |
+| 503         | The app cannot connect to Neo4j        | 503    |
+| 500         | Any other error                        | 500    |
+
+All codes are in `constants/ECodeResponse.java`.
+
+CORS is set in `config/CorsConfig.java`. It allows any origin, the methods
+`GET, POST, DELETE, PUT, OPTIONS` and the header `X-ScrumGraph-Header`.
+
+## Design
+
+A user belongs to a Scrum team. The team works on a project. A project has
+sprints and is defined by product backlog items. A sprint works on a set of
+PBIs. A PBI is done through a set of tasks.
+
+![Domain model](img/modelodominio.png)
+
+### Nodes
+
+- **USER**: a member of a Scrum team.
+- **TEAM**: a Scrum team.
+- **PROJECT**: the software project to track.
+- **PBI**: a product backlog item, a feature of a project.
+- **SPRINT**: an iteration of a project.
+- **TASK**: a task of a PBI.
+
+### Relationships
+
+- **BELONGS_TO**: USER to TEAM. The users of a team.
+- **WORKS_ON**: TEAM to PROJECT. The team of a project.
+- **IS_DEFINED_BY**: PROJECT to PBI. The features of a project.
+- **IS_COMPOSED_OF**: PROJECT to SPRINT. The iterations of a project.
+- **IS_COMPOSED_BY**: SPRINT to PBI. The features worked on in a sprint.
+- **IS_PERFORMED_BY**: PBI to TASK. The tasks of a feature.
+
+### Attributes
+
+Each node has key-value properties:
+
+![USER attributes](img/attr_user.png)
+![TEAM attributes](img/attr_team.png)
+![PROJECT attributes](img/attr_project.png)
+![PBI attributes](img/attr_pbi.png)
+![SPRINT attributes](img/attr_sprint.png)
+![TASK attributes](img/attr_task.png)
+
+### Constraints
+
+These properties are unique per label:
+
+- **USER**: `email`
+- **PROJECT**, **PBI**, **SPRINT**, **TASK**: `code`
+
+## Docs
+
+- `docs/SCRIPT_INSTALLATION`: constraints, indexes and the admin user.
+- `docs/SCRIT_BD_DUMMIE.txt`: sample data with fake users.
+- `docs/REST Definiciones.txt`: early notes about the planned REST resources (Spanish).
