@@ -113,9 +113,9 @@ The following constraints were defined:
   + **Entity Body:**
   ```json
       {
-      "name": "Cristian",
-      "lastName": "Peña",
-      "email": "cristiancamilopena@gmail.com",
+      "name": "Bob",
+      "lastName": "Jones",
+      "email": "bob.jones@example.com",
       "password": "asassaddsd",
       "roleDefault": "team-member",
       "isAdmin": false
@@ -133,9 +133,9 @@ The following constraints were defined:
           "response": {
               "user": {
                   "id": 3,
-                  "name": "Cristian",
-                  "lastName": "Peña",
-                  "email": "cristiancamilopena@gmail.com",
+                  "name": "Bob",
+                  "lastName": "Jones",
+                  "email": "bob.jones@example.com",
                   "roleDefault": "team-member",
                   "available": "true",
                   "isAdmin": "false",
@@ -168,23 +168,23 @@ The following constraints were defined:
                 "id": 1,
                 "name": "SUPER ADMIN SG",
                 "lastName": "SCRUM GRAPH",
-                "email": "superadminsg@gmail.com",
+                "email": "superadminsg@example.com",
                 "available": true,
                 "admin": true
             },
             {
                 "id": 2,
-                "name": "Jimena",
-                "lastName": "Rodríguez",
-                "email": "jimenarp@gmail.com",
+                "name": "Carol",
+                "lastName": "Brown",
+                "email": "carol.brown@example.com",
                 "available": true,
                 "admin": false
             },
             {
                 "id": 3,
-                "name": "Cristian",
-                "lastName": "Peña",
-                "email": "cristiancamilopena@gmail.com",
+                "name": "Bob",
+                "lastName": "Jones",
+                "email": "bob.jones@example.com",
                 "available": true,
                 "admin": false
             }

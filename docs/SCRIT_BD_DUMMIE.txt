@@ -1,8 +1,8 @@
 CREATE 
-(m1:USER { name:"Mauricio", lastName:"Bello", email:"erwing.bello@gmail.com", isAdmin:false , available:true, authToken: "f50012afb304723061a433" , password : "pass123" , rolDefault : "team-member" ,  createAt : timestamp() , lastModification : timestamp()}),
-(m2:USER { name:"Cristian", lastName:"PeÃ±a", email:"cristiancamilopena@gmail.com", isAdmin:false, available:true, authToken: "eea30a4cec3e24441302331" , password : "pass123" , rolDefault : "team-leader" ,  createAt : timestamp() , lastModification : timestamp()}),
-(m3:USER { name:"Jimena", lastName:"Rodriguez", email:"jimena.ud@gmail.com", isAdmin:false , available:true, authToken: "ec0f4ece1664ff336147" , password : "pass123" , rolDefault : "scrum-master" ,  createAt : timestamp() , lastModification : timestamp() }),
-(m4:USER { name:"Product", lastName:"Owner", email:"product-owner@gmail.com", isAdmin:false , available:false, authToken: "50946d7bc37422501643" , password : "pass123" , rolDefault : "product-owner" ,  createAt : timestamp() , lastModification : timestamp()}),
+(m1:USER { name:"Alice", lastName:"Smith", email:"alice.smith@example.com", isAdmin:false , available:true, authToken: "f50012afb304723061a433" , password : "pass123" , rolDefault : "team-member" ,  createAt : timestamp() , lastModification : timestamp()}),
+(m2:USER { name:"Bob", lastName:"Jones", email:"bob.jones@example.com", isAdmin:false, available:true, authToken: "eea30a4cec3e24441302331" , password : "pass123" , rolDefault : "team-leader" ,  createAt : timestamp() , lastModification : timestamp()}),
+(m3:USER { name:"Carol", lastName:"Brown", email:"carol.brown@example.com", isAdmin:false , available:true, authToken: "ec0f4ece1664ff336147" , password : "pass123" , rolDefault : "scrum-master" ,  createAt : timestamp() , lastModification : timestamp() }),
+(m4:USER { name:"Product", lastName:"Owner", email:"product-owner@example.com", isAdmin:false , available:false, authToken: "50946d7bc37422501643" , password : "pass123" , rolDefault : "product-owner" ,  createAt : timestamp() , lastModification : timestamp()}),
 
 
 (p1:PROJECT { name:"Proyecto 1", description:"...", code : "PROJ-1" , ownerId : 1 ,  createAt : timestamp() , lastModification : timestamp(),

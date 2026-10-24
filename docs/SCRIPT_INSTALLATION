@@ -14,7 +14,7 @@ CREATE INDEX ON :TASK(id)
 
 // Creacion de usuario Admin True por defecto
 CREATE 
-(u0:USER { name:"SUPER ADMIN SG", lastName:"SCRUM GRAPH", email:"superadminsg@gmail.com", isAdmin:true , available:true, authToken: "b24212354022337c4040c8" , password : "superadminsg" , rolDefault : "scrum" ,  createAt : timestamp() , lastModification : timestamp()})
+(u0:USER { name:"SUPER ADMIN SG", lastName:"SCRUM GRAPH", email:"superadminsg@example.com", isAdmin:true , available:true, authToken: "b24212354022337c4040c8" , password : "superadminsg" , rolDefault : "scrum" ,  createAt : timestamp() , lastModification : timestamp()})
 
 
 
